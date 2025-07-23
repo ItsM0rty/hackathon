@@ -1,0 +1,6 @@
+[
+  { "code": "NYC", "name": "New York, USA", "iata": "JFK" },
+  { "code": "LON", "name": "London, UK", "iata": "LHR" },
+  { "code": "DEL", "name": "Delhi, India", "iata": "DEL" },
+  { "code": "TYO", "name": "Tokyo, Japan", "iata": "NRT" }
+] 
