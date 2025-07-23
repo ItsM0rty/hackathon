@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import SecondPage from './SecondPage';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 
 const LOCATIONS = [
   { label: 'Kathmandu', value: 'kathmandu' },
@@ -26,11 +28,12 @@ const COUNTRIES = [
   { label: 'Other', value: 'other', states: [] },
 ];
 
-export default function App() {
+function MainPage() {
   const [selectedLocation, setSelectedLocation] = useState('kathmandu');
   const [arriving, setArriving] = useState('kathmandu');
   const [country, setCountry] = useState('us');
   const [state, setState] = useState('California');
+  // Remove page state, use router instead
 
   const handleLocationChange = (loc) => {
     setSelectedLocation(loc);
@@ -64,7 +67,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center py-8 px-2">
+    <div className="min-h-screen bg-white flex flex-col items-center py-8 px-2 relative">
       {/* Header */}
       <header className="w-full max-w-5xl flex justify-between items-center mb-8">
         <div className="flex items-center gap-2">
@@ -159,6 +162,24 @@ export default function App() {
           </div>
         ))}
       </section>
+      {/* Next Button */}
+      <Link
+        to="/second"
+        className="btn btn-primary fixed bottom-6 right-6 z-50"
+      >
+        Next
+      </Link>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/second" element={<SecondPage onBack={() => window.history.back()} />} />
+      </Routes>
+    </Router>
   );
 }
