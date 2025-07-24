@@ -1,10 +1,2 @@
 Patan Durbar Square
-Location: Lalitpur (Patan)
-Description: A beautifully preserved royal square famous for Newari architecture, ancient temples, and the excellent Patan Museum.
-Things to Do:
-
-Visit Patan Museum
-
-Admire temples & carvings
-
-Explore local shops & cafes
+Description: Ancient art. Stunning Newari design.

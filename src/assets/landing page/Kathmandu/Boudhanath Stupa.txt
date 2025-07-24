@@ -1,10 +1,2 @@
 Boudhanath Stupa
-Location: Kathmandu
-Description: One of the largest stupas in the world — center of Tibetan Buddhist culture with peaceful monasteries and rooftop cafes.
-Things to Do:
-
-Walk around the stupa
-
-Spin prayer wheels
-
-Relax in local cafes
+Description: Massive Buddhist dome. Peaceful energy.

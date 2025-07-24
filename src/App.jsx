@@ -91,6 +91,19 @@ const globalStyle = `
   }
 `;
 
+// Add Inter font from Google Fonts
+const fontLink = document.createElement('link');
+fontLink.rel = 'stylesheet';
+fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+if (!document.head.querySelector('link[href*="fonts.googleapis.com"]')) document.head.appendChild(fontLink);
+
+const fontStyle = `
+  html, body, * {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-display: swap;
+  }
+`;
+
 const LOCATIONS = [
   { label: 'Kathmandu', value: 'kathmandu' },
   { label: 'Pokhara', value: 'pokhara' },
@@ -244,6 +257,7 @@ function MainPage() {
   return (
     <>
       <style>{globalStyle}</style>
+      <style>{fontStyle}</style>
       <style>{themeStyle}</style>
       <style>{selectInputStyle}</style>
       <style>{`
@@ -371,7 +385,7 @@ function MainPage() {
 
         {/* Recommendations Section */}
         <section className="w-full max-w-5xl" ref={topDestRef}>
-          <h2 className="text-lg font-bold text-blue-600 mb-2 uppercase tracking-wider">Top Destinations</h2>
+          <h2 className="text-2xl font-bold text-[#144D4A] mb-6">Top Destinations</h2>
           {places.kathmandu.length === 0 && places.pokhara.length === 0 && (
             <div className="text-center text-red-600 font-bold my-8">
               No places found. Check your folder and file names.<br/>
@@ -394,8 +408,8 @@ function MainPage() {
             </div>
           )}
           {getOrderedLocations().map(locKey => (
-            <div key={locKey} className="mb-8">
-              <h3 className="text-2xl font-semibold mb-6 text-gray-900">Recommended in {LOCATIONS.find(l => l.value === locKey).label}</h3>
+            <div key={locKey} className="mb-12">
+              <h3 className="text-2xl font-bold text-[#F26B3A] mb-6">Recommended in {LOCATIONS.find(l => l.value === locKey).label}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {places[locKey].map((place, idx) => {
                   const selected = selectedRecommendations.find(r => r.name === place.name && r.description === place.description);
@@ -404,6 +418,8 @@ function MainPage() {
                   let images = place.activityImages && place.activityImages.length === 4
                     ? place.activityImages
                     : [place.mainImage, ...place.activityImages].filter(Boolean).slice(0, 4);
+                  // Track which side is hovered for this card
+                  const [hoverSide, setHoverSide] = useState(null); // 'left', 'right', or null
                   // Add price and rating (use defaults if not present)
                   const price = place.price || ('$' + (10 + (idx % 5) * 5));
                   const rating = place.rating || (4.5 + (idx % 5) * 0.1);
@@ -417,11 +433,21 @@ function MainPage() {
                       {/* Checkmark for selected */}
                       {selected && (
                         <span className="absolute top-3 right-3 z-20">
-                          <CheckCircleIcon className="h-7 w-7 text-green-400 drop-shadow-lg" />
+                          <CheckCircleIcon className="h-7 w-7 text-green-400 drop-shadow-lg" style={{ color: '#22c55e', background: 'white', borderRadius: '50%' }} />
                         </span>
                       )}
                       {/* Slideshow for images */}
-                      <div className="w-full h-64 bg-gray-200 relative overflow-hidden group mb-4">
+                      <div
+                        className="w-full h-64 bg-gray-200 relative overflow-hidden group mb-4"
+                        onMouseMove={e => {
+                          const bounds = e.currentTarget.getBoundingClientRect();
+                          const x = e.clientX - bounds.left;
+                          if (x < bounds.width / 3) setHoverSide('left');
+                          else if (x > (2 * bounds.width) / 3) setHoverSide('right');
+                          else setHoverSide(null);
+                        }}
+                        onMouseLeave={() => setHoverSide(null)}
+                      >
                         {images.length > 0 ? (
                           <img
                             src={images[slideIdx % images.length]}
@@ -431,42 +457,44 @@ function MainPage() {
                         ) : (
                           <span className="text-4xl flex items-center justify-center w-full h-full">🏞️</span>
                         )}
-                        {/* Left overlay for previous */}
-                        {images.length > 1 && (
+                        {/* Left overlay for previous with shadow, only show if hoverSide is 'left' */}
+                        {hoverSide === 'left' && (
                           <div
-                            className="absolute left-0 top-0 h-full w-1/3 cursor-pointer flex items-center pl-2 z-10"
+                            className="absolute left-0 top-0 h-full w-1/2 cursor-pointer flex items-center pl-2 z-10 opacity-100 transition-opacity duration-200"
                             onClick={e => { e.stopPropagation(); setCardSlides(s => ({ ...s, [place.name]: (slideIdx - 1 + images.length) % images.length })); }}
                           >
-                            <ChevronLeftIcon className="h-8 w-8 text-white drop-shadow-lg opacity-80" />
+                            <div className="absolute left-0 top-0 h-full w-1/2 bg-gradient-to-r from-black/40 via-black/10 via-transparent to-transparent pointer-events-none" />
+                            <ChevronLeftIcon className="h-8 w-8 text-white drop-shadow-lg relative" />
                           </div>
                         )}
-                        {/* Right overlay for next */}
-                        {images.length > 1 && (
+                        {/* Right overlay for next with shadow, only show if hoverSide is 'right' */}
+                        {hoverSide === 'right' && (
                           <div
-                            className="absolute right-0 top-0 h-full w-1/3 cursor-pointer flex items-center justify-end pr-2 z-10"
+                            className="absolute right-0 top-0 h-full w-1/2 cursor-pointer flex items-center justify-end pr-2 z-10 opacity-100 transition-opacity duration-200"
                             onClick={e => { e.stopPropagation(); setCardSlides(s => ({ ...s, [place.name]: (slideIdx + 1) % images.length })); }}
                           >
-                            <ChevronRightIcon className="h-8 w-8 text-white drop-shadow-lg opacity-80" />
-                          </div>
-                        )}
-                        {/* Dots below the image and above the name */}
-                        {images.length > 1 && (
-                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
-                            {images.map((_, i) => (
-                              <span
-                                key={i}
-                                className={`inline-block w-2 h-2 rounded-full transition-all duration-200 border border-white shadow ${i === slideIdx % images.length ? 'bg-blue-600 scale-110' : 'bg-gray-300'}`}
-                              />
-                            ))}
+                            <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-black/40 via-black/10 via-transparent to-transparent pointer-events-none" />
+                            <ChevronRightIcon className="h-8 w-8 text-white drop-shadow-lg relative" />
                           </div>
                         )}
                       </div>
+                      {/* Paginator dots below the image and above the name */}
+                      {images.length > 1 && (
+                        <div className="w-full flex justify-center gap-1 mb-2">
+                          {images.map((_, i) => (
+                            <span
+                              key={i}
+                              className={`inline-block w-2 h-2 rounded-full transition-all duration-200 ${i === slideIdx % images.length ? 'bg-blue-600 scale-110' : 'bg-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      )}
                       <div className="p-6 w-full flex flex-col items-start">
                         <div className="flex items-center justify-between w-full mb-1">
                           <h4 className="font-bold text-lg">{place.name}</h4>
                           <span className="text-green-600 font-semibold">{price}</span>
                         </div>
-                        <p className="mb-2" style={{ color: PEACH_CORAL }}>{shortDescription(place.description)}</p>
+                        <p className="mb-2 text-gray-900">{shortDescription(place.description)}</p>
                         <div className="flex items-center gap-1 mb-2">
                           <span className="text-orange-500 font-bold">{rating.toFixed(1)}</span>
                           <span className="text-orange-400">★</span>
@@ -492,10 +520,10 @@ function MainPage() {
         )}
         {/* Booking Modal */}
         {showBookingModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-2xl shadow-lg p-8 max-w-lg w-full relative">
+          <div className="fixed z-50 right-6 top-44 flex flex-col items-end" style={{ minWidth: 320, maxWidth: 360 }}>
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full relative border border-gray-200" style={{ maxHeight: 400, overflowY: 'auto' }}>
               <button className="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-700" onClick={() => setShowBookingModal(false)}>&times;</button>
-              <h2 className="text-2xl font-bold mb-4 text-[#144D4A]">Your Selected Places</h2>
+              <h2 className="text-xl font-bold mb-4 text-[#144D4A]">Your Selected Places</h2>
               {selectedRecommendations.length === 0 ? (
                 <p className="text-gray-500">No places selected yet.</p>
               ) : (
@@ -508,25 +536,32 @@ function MainPage() {
                   ))}
                 </ul>
               )}
-              <button className="mt-6 w-full py-2 rounded bg-[#144D4A] text-white font-bold hover:bg-[#17605C] transition">Next</button>
+              <button
+                className="mt-6 w-full py-2 rounded bg-[#144D4A] text-white font-bold hover:bg-[#17605C] transition"
+                onClick={() => { setShowBookingModal(false); navigate('/second'); }}
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
         {/* Booking Button: fixed at top right at all times */}
         {selectedRecommendations.length > 0 && (
         <div className="fixed right-6 top-24 z-50 flex flex-col items-end transition-all duration-300">
-          <button
-            className="rounded-full shadow-lg bg-white p-2 hover:scale-105 transition-transform border-2 border-[#144D4A]"
-            onClick={() => setShowBookingModal(true)}
-            style={{ width: 64, height: 64 }}
-          >
-            <img src={bookingImg} alt="Booking" className="w-full h-full object-contain" />
-          </button>
-          {showPlaceAdded && (
-            <div className="mt-3 px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold shadow-lg animate-fadeinout transition-opacity duration-700">
-              Place Added
-            </div>
-          )}
+          <div className="relative">
+            <button
+              className="rounded-full shadow-lg bg-white p-2 hover:scale-105 transition-transform border-2 border-[#144D4A]"
+              onClick={() => setShowBookingModal(true)}
+              style={{ width: 64, height: 64 }}
+            >
+              <img src={bookingImg} alt="Booking" className="w-full h-full object-contain" />
+            </button>
+            {showPlaceAdded && (
+              <div className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold shadow-lg animate-fadeinout transition-opacity duration-700 whitespace-nowrap">
+                Place Added
+              </div>
+            )}
+          </div>
         </div>
         )}
         {/* Footer */}
@@ -548,6 +583,7 @@ export default function App() {
   return (
     <>
       <style>{globalStyle}</style>
+      <style>{fontStyle}</style>
       <style>{themeStyle}</style>
       <style>{selectInputStyle}</style>
       <Router>
