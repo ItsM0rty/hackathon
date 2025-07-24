@@ -12,6 +12,73 @@ import headerImage from './assets/landing page/Header image.jpg';
 import bookingImg from './assets/landing page/booking.png';
 import logoImg from './assets/landing page/LOGO.png';
 import guestImg from './assets/landing page/guest.png';
+// Dynamic loader for place data from Kathmandu and Pokhara folders
+import { useMemo } from 'react';
+
+const placeFolders = [
+  { key: 'kathmandu', label: 'Kathmandu', folder: '/src/assets/landing page/Kathmandu' },
+  { key: 'pokhara', label: 'Pokhara', folder: '/src/assets/landing page/Pokhara' },
+];
+
+function useDynamicPlaces() {
+  // Import all text files and images from both folders
+  const txtFiles = import.meta.glob('/src/assets/landing page/*/*.txt', { as: 'raw', eager: true });
+  const imgFiles = import.meta.glob('/src/assets/landing page/*/*.{jpg,png,webp,avif,jfif}', { eager: true, as: 'url' });
+
+  return useMemo(() => {
+    const places = { kathmandu: [], pokhara: [] };
+    for (const [txtPath, txtContent] of Object.entries(txtFiles)) {
+      // Extract folder and base name
+      const match = txtPath.match(/\/landing page\/(Kathmandu|Pokhara)\/([^/]+)\.txt$/);
+      if (!match) continue;
+      const folder = match[1].toLowerCase();
+      const base = match[2];
+      // Parse text file
+      const lines = txtContent.split('\n').map(l => l.trim()).filter(Boolean);
+      const name = lines[0] || base;
+      const location = lines.find(l => l.startsWith('Location:'))?.replace('Location:', '').trim() || '';
+      const description = lines.find(l => l.startsWith('Description:'))?.replace('Description:', '').trim() || '';
+      const thingsStart = lines.findIndex(l => l.startsWith('Things to Do:'));
+      let things = [];
+      if (thingsStart !== -1) {
+        things = lines.slice(thingsStart + 1).filter(l => l && !l.startsWith('Location:') && !l.startsWith('Description:'));
+      }
+      // Find images for this place
+      const imgBase = base.replace(/\s+/g, ' ');
+      const images = Object.entries(imgFiles)
+        .filter(([imgPath]) => imgPath.includes(`/${match[1]}/`) && imgPath.match(new RegExp(imgBase + '( |\.|$)', 'i')))
+        .map(([imgPath, url]) => ({ imgPath, url }));
+      // Activity images: those with 'act' in the name, sorted by act number
+      let activityImages = images
+        .filter(({ imgPath }) => /act ?(\d)/i.test(imgPath))
+        .sort((a, b) => {
+          const aNum = parseInt((a.imgPath.match(/act ?(\d)/i) || [])[1] || '0', 10);
+          const bNum = parseInt((b.imgPath.match(/act ?(\d)/i) || [])[1] || '0', 10);
+          return aNum - bNum;
+        })
+        .map(({ url }) => url);
+      // Main image: act 0 if present, else first image not an act image, else first image
+      let mainImage = images.find(({ imgPath }) => /act ?0/i.test(imgPath));
+      if (mainImage) mainImage = mainImage.url;
+      else {
+        const notAct = images.find(({ imgPath }) => !/act ?\d/i.test(imgPath));
+        mainImage = notAct ? notAct.url : (images[0] ? images[0].url : undefined);
+      }
+      places[folder].push({
+        name,
+        location,
+        description,
+        things,
+        mainImage,
+        activityImages,
+      });
+    }
+    // Sort by name for consistency
+    places.kathmandu.sort((a, b) => a.name.localeCompare(b.name));
+    places.pokhara.sort((a, b) => a.name.localeCompare(b.name));
+    return places;
+  }, [txtFiles, imgFiles]);
+}
 
 // Hide scrollbars globally
 const globalStyle = `
@@ -102,11 +169,6 @@ function MainPage() {
   const [arriving, setArriving] = useState('kathmandu');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
-  // Slideshow state for Swayambhunath
-  const [swayambhuSlide, setSwayambhuSlide] = useState(0);
-  const [isSwayambhuHovered, setIsSwayambhuHovered] = useState(false);
-  const swayambhuTimeout = useRef();
-  const [swayambhuHoverSide, setSwayambhuHoverSide] = useState(null); // 'left', 'right', or null
   const [headerSolid, setHeaderSolid] = useState(false);
   const [selectedRecommendations, setSelectedRecommendations] = useState([]);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -115,6 +177,9 @@ function MainPage() {
   const navigate = useNavigate();
   const topDestRef = useRef(null);
   const [bookingFloat, setBookingFloat] = useState(false);
+  // Card slideshow state: one per card
+  const [cardSlides, setCardSlides] = useState({}); // { [placeName]: idx }
+  const places = useDynamicPlaces();
   useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
@@ -142,13 +207,6 @@ function MainPage() {
   };
 
   // Auto-rotate Swayambhu images
-  useEffect(() => {
-    if (isSwayambhuHovered) return;
-    swayambhuTimeout.current = setTimeout(() => {
-      setSwayambhuSlide((swayambhuSlide + 1) % swayambhuImages.length);
-    }, 3000);
-    return () => clearTimeout(swayambhuTimeout.current);
-  }, [swayambhuSlide, isSwayambhuHovered]);
   // Remove page state, use router instead
 
   const handleLocationChange = (loc) => {
@@ -176,6 +234,13 @@ function MainPage() {
     return `${city}, ${country}`;
   };
 
+  // Helper to extract description before em dash
+  function shortDescription(desc) {
+    if (!desc) return '';
+    const idx = desc.indexOf('—');
+    return idx !== -1 ? desc.slice(0, idx).trim() : desc;
+  }
+
   return (
     <>
       <style>{globalStyle}</style>
@@ -196,10 +261,10 @@ function MainPage() {
           className={`fixed top-0 left-0 w-full z-30 transition-all duration-300 ${headerSolid ? 'bg-white/95 shadow-lg border-b border-gray-200' : 'bg-white/80'} backdrop-blur-md`}
           style={{ minHeight: '72px' }}
         >
-          <div className="w-full max-w-5xl mx-auto flex justify-between items-center px-8 py-3">
+          <div className="w-full flex justify-between items-center px-16 py-3">
             <div className="flex items-center gap-2">
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="focus:outline-none">
-                <img src={logoImg} alt="Yatra Logo" className="h-10 w-auto" />
+                <img src={logoImg} alt="Yatra Logo" className="h-10 w-auto mt-2" />
               </button>
             </div>
             <nav className="flex gap-8 font-medium text-gray-800">
@@ -209,9 +274,10 @@ function MainPage() {
               <a href="#" className="hover:text-orange-500">Contact</a>
             </nav>
             <div className="flex gap-4">
-              <button className="rounded-full bg-white shadow border border-gray-300 p-1 hover:scale-105 transition-transform focus:outline-none" style={{ width: 44, height: 44 }}>
-                <img src={guestImg} alt="Guest" className="w-full h-full object-contain" />
-              </button>
+              <div className="flex items-center gap-2">
+                <img src={guestImg} alt="Guest" className="h-10 w-10 object-contain" />
+                <span className="font-medium text-gray-800 text-lg">Guest</span>
+              </div>
             </div>
           </div>
         </header>
@@ -306,88 +372,111 @@ function MainPage() {
         {/* Recommendations Section */}
         <section className="w-full max-w-5xl" ref={topDestRef}>
           <h2 className="text-lg font-bold text-blue-600 mb-2 uppercase tracking-wider">Top Destinations</h2>
+          {places.kathmandu.length === 0 && places.pokhara.length === 0 && (
+            <div className="text-center text-red-600 font-bold my-8">
+              No places found. Check your folder and file names.<br/>
+              <div className="themed-card rounded-2xl shadow overflow-hidden flex flex-col items-start cursor-pointer transition-all duration-200 border-2 relative w-80 mx-auto mt-8">
+                <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                  <span className="text-4xl">🏞️</span>
+                </div>
+                <div className="p-6 w-full flex flex-col items-start">
+                  <div className="flex items-center justify-between w-full mb-1">
+                    <h4 className="font-bold text-lg">Sample Place</h4>
+                    <span className="text-green-600 font-semibold">$20</span>
+                  </div>
+                  <p className="mb-2" style={{ color: PEACH_CORAL }}>Sample description</p>
+                  <div className="flex items-center gap-1 mb-2">
+                    <span className="text-orange-500 font-bold">4.8</span>
+                    <span className="text-orange-400">★</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {getOrderedLocations().map(locKey => (
             <div key={locKey} className="mb-8">
               <h3 className="text-2xl font-semibold mb-6 text-gray-900">Recommended in {LOCATIONS.find(l => l.value === locKey).label}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {RECOMMENDATIONS[locKey].map((rec, idx) => (
-                  <div
-                    key={idx}
-                    className={`themed-card rounded-2xl shadow overflow-hidden flex flex-col items-start cursor-pointer transition-all duration-200 border-2 relative ${selectedRecommendations.find(r => r.name === rec.name && r.desc === rec.desc) ? 'border-orange-400 bg-[#F26B3A] text-white' : ''}`}
-                    style={{ boxShadow: '0 2px 16px 0 rgba(20,77,74,0.10)' }}
-                    onClick={() => toggleRecommendation(rec)}
-                  >
-                    {/* Checkmark for selected */}
-                    {selectedRecommendations.find(r => r.name === rec.name && r.desc === rec.desc) && (
-                      <span className="absolute top-3 right-3 z-20">
-                        <CheckCircleIcon className="h-7 w-7 text-green-400 drop-shadow-lg" />
-                      </span>
-                    )}
-                    {/* Slideshow for Swayambhunath Stupa */}
-                    {rec.name === 'Swayambhunath Stupa' ? (
-                      <>
-                        <div
-                          className="w-full h-64 bg-gray-200 relative overflow-hidden group mb-4"
-                          onMouseEnter={() => setIsSwayambhuHovered(true)}
-                          onMouseLeave={() => { setIsSwayambhuHovered(false); setSwayambhuHoverSide(null); }}
-                          onMouseMove={e => {
-                            const bounds = e.currentTarget.getBoundingClientRect();
-                            const x = e.clientX - bounds.left;
-                            if (x < bounds.width / 3) setSwayambhuHoverSide('left');
-                            else if (x > (2 * bounds.width) / 3) setSwayambhuHoverSide('right');
-                            else setSwayambhuHoverSide(null);
-                          }}
-                        >
+                {places[locKey].map((place, idx) => {
+                  const selected = selectedRecommendations.find(r => r.name === place.name && r.description === place.description);
+                  const slideIdx = cardSlides[place.name] || 0;
+                  // Use only the sorted activityImages (act 0, act 1, act 2, act 3) for the slideshow
+                  let images = place.activityImages && place.activityImages.length === 4
+                    ? place.activityImages
+                    : [place.mainImage, ...place.activityImages].filter(Boolean).slice(0, 4);
+                  // Add price and rating (use defaults if not present)
+                  const price = place.price || ('$' + (10 + (idx % 5) * 5));
+                  const rating = place.rating || (4.5 + (idx % 5) * 0.1);
+                  return (
+                    <div
+                      key={place.name}
+                      className={`themed-card rounded-2xl shadow overflow-hidden flex flex-col items-start cursor-pointer transition-all duration-200 border-2 relative ${selected ? 'border-orange-400 bg-[#F26B3A] text-white' : ''}`}
+                      style={{ boxShadow: '0 2px 16px 0 rgba(20,77,74,0.10)' }}
+                      onClick={() => toggleRecommendation(place)}
+                    >
+                      {/* Checkmark for selected */}
+                      {selected && (
+                        <span className="absolute top-3 right-3 z-20">
+                          <CheckCircleIcon className="h-7 w-7 text-green-400 drop-shadow-lg" />
+                        </span>
+                      )}
+                      {/* Slideshow for images */}
+                      <div className="w-full h-64 bg-gray-200 relative overflow-hidden group mb-4">
+                        {images.length > 0 ? (
                           <img
-                            src={swayambhuImages[swayambhuSlide]}
-                            alt="Swayambhunath Stupa"
+                            src={images[slideIdx % images.length]}
+                            alt={place.name}
                             className="object-cover w-full h-full transition-all duration-500"
                           />
-                          {/* Left overlay for previous */}
+                        ) : (
+                          <span className="text-4xl flex items-center justify-center w-full h-full">🏞️</span>
+                        )}
+                        {/* Left overlay for previous */}
+                        {images.length > 1 && (
                           <div
-                            className={`absolute left-0 top-0 h-full w-1/3 cursor-pointer transition-all duration-200 flex items-center pl-2
-                              ${swayambhuHoverSide === 'left' ? 'bg-gradient-to-r from-black/30 via-black/10 to-transparent opacity-80' : 'opacity-0'}`}
-                            onClick={e => { e.stopPropagation(); setSwayambhuSlide((swayambhuSlide - 1 + swayambhuImages.length) % swayambhuImages.length); }}
+                            className="absolute left-0 top-0 h-full w-1/3 cursor-pointer flex items-center pl-2 z-10"
+                            onClick={e => { e.stopPropagation(); setCardSlides(s => ({ ...s, [place.name]: (slideIdx - 1 + images.length) % images.length })); }}
                           >
-                            {swayambhuHoverSide === 'left' && <ChevronLeftIcon className="h-10 w-10 text-white drop-shadow-lg opacity-100" />}
+                            <ChevronLeftIcon className="h-8 w-8 text-white drop-shadow-lg opacity-80" />
                           </div>
-                          {/* Right overlay for next */}
+                        )}
+                        {/* Right overlay for next */}
+                        {images.length > 1 && (
                           <div
-                            className={`absolute right-0 top-0 h-full w-1/3 cursor-pointer transition-all duration-200 flex items-center justify-end pr-2
-                              ${swayambhuHoverSide === 'right' ? 'bg-gradient-to-l from-black/30 via-black/10 to-transparent opacity-80' : 'opacity-0'}`}
-                            onClick={e => { e.stopPropagation(); setSwayambhuSlide((swayambhuSlide + 1) % swayambhuImages.length); }}
+                            className="absolute right-0 top-0 h-full w-1/3 cursor-pointer flex items-center justify-end pr-2 z-10"
+                            onClick={e => { e.stopPropagation(); setCardSlides(s => ({ ...s, [place.name]: (slideIdx + 1) % images.length })); }}
                           >
-                            {swayambhuHoverSide === 'right' && <ChevronRightIcon className="h-10 w-10 text-white drop-shadow-lg opacity-100" />}
+                            <ChevronRightIcon className="h-8 w-8 text-white drop-shadow-lg opacity-80" />
                           </div>
-                        </div>
-                        {/* Dots inside the image at the bottom center */}
-                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-                          {swayambhuImages.map((_, i) => (
-                            <span
-                              key={i}
-                              className={`inline-block w-2 h-2 rounded-full transition-all duration-200 border border-white shadow ${i === swayambhuSlide ? 'bg-blue-600 scale-110' : 'bg-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-64 bg-gray-200 rounded-xl mb-4 flex items-center justify-center">
-                        <span className="text-4xl">🏞️</span>
+                        )}
+                        {/* Dots below the image and above the name */}
+                        {images.length > 1 && (
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
+                            {images.map((_, i) => (
+                              <span
+                                key={i}
+                                className={`inline-block w-2 h-2 rounded-full transition-all duration-200 border border-white shadow ${i === slideIdx % images.length ? 'bg-blue-600 scale-110' : 'bg-gray-300'}`}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                    <div className="p-6 w-full flex flex-col items-start">
-                      <h4 className="font-bold text-lg mb-1">{rec.name}</h4>
-                      <p className="mb-2" style={{ color: PEACH_CORAL }}>{rec.desc}</p>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-green-600 font-semibold">{rec.price}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-orange-500 font-bold">{rec.rating}</span>
-                        <span className="text-orange-400">★</span>
+                      <div className="p-6 w-full flex flex-col items-start">
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <h4 className="font-bold text-lg">{place.name}</h4>
+                          <span className="text-green-600 font-semibold">{price}</span>
+                        </div>
+                        <p className="mb-2" style={{ color: PEACH_CORAL }}>{shortDescription(place.description)}</p>
+                        <div className="flex items-center gap-1 mb-2">
+                          <span className="text-orange-500 font-bold">{rating.toFixed(1)}</span>
+                          <span className="text-orange-400">★</span>
+                        </div>
+                        {/* Location removed as requested */}
+                        {/* Optionally, show things to do as a tooltip or on click if you want */}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -424,6 +513,7 @@ function MainPage() {
           </div>
         )}
         {/* Booking Button: fixed at top right at all times */}
+        {selectedRecommendations.length > 0 && (
         <div className="fixed right-6 top-24 z-50 flex flex-col items-end transition-all duration-300">
           <button
             className="rounded-full shadow-lg bg-white p-2 hover:scale-105 transition-transform border-2 border-[#144D4A]"
@@ -438,6 +528,7 @@ function MainPage() {
             </div>
           )}
         </div>
+        )}
         {/* Footer */}
         <footer className="w-full bg-[#F8FAFC] text-gray-800 py-6 mt-16 flex flex-col items-center gap-2 border-t border-gray-200">
           <div className="flex flex-col md:flex-row md:justify-between w-full max-w-5xl px-4 items-center">
