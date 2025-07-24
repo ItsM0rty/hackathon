@@ -120,12 +120,6 @@ function MainPage() {
           <span className="text-blue-600">{LOCATIONS.find(l => l.value === selectedLocation)?.label}</span>
           <span>✈️</span>
         </div>
-        <div className="w-full h-2 flex items-center justify-center mt-2">
-          <div className="w-2/3 h-1 bg-blue-200 rounded-full relative">
-            <div className="absolute left-0 -top-2 text-blue-600 text-xs">{getOriginDisplay()}</div>
-            <div className="absolute right-0 -top-2 text-blue-600 text-xs">{LOCATIONS.find(l => l.value === selectedLocation)?.label}</div>
-          </div>
-        </div>
       </section>
 
       {/* Recommendations Section */}
