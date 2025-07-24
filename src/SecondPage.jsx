@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRightIcon, BuildingOffice2Icon, TicketIcon, MapPinIcon, XMarkIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/outline';
+import AirlineLogo from './components/AirlineLogo';
 
 // Web fonts - adding premium typography
 const WebFonts = () => (
@@ -8,46 +9,12 @@ const WebFonts = () => (
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
       .font-display { font-family: 'Playfair Display', serif; }
       .font-sans { font-family: 'Inter', sans-serif; }
-      .gradient-border {
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6) border-box;
-        border: 2px solid transparent;
-      }
-      .glass-effect {
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .premium-shadow {
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      }
     `}
   </style>
 );
 
-// Enhanced AirlineLogo component
-const AirlineLogo = ({ airlineName, className = "" }) => {
-  const logos = {
-    'qatar airways': 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Qatar_Airways_Logo.svg',
-    'air india': 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Air_India_Logo.svg',
-    'emirates': 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Emirates_logo.svg'
-  };
-  const fallbackLogo = 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';
-  const normalized = (airlineName || '').toLowerCase().trim();
-  const logoUrl = logos[normalized] || fallbackLogo;
-  return (
-    <div className={`flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 ${className}`}>
-      <img 
-        src={logoUrl} 
-        alt={airlineName} 
-        className="h-12 w-auto object-contain"
-      />
-    </div>
-  );
-};
-
-// Enhanced Travel Mode Selector Component
-const TravelModeSelector = ({ mode, onChange, selectedTravel, options, onTravelChange }) => {
+// Enhanced Travel Mode Selector Component with animations
+const TravelModeSelector = ({ mode, onChange, selectedTravel, options, onTravelChange, title }) => {
   return (
     <div className="space-y-4">
       <div className="flex bg-gray-100 rounded-xl p-1">
@@ -78,13 +45,9 @@ const TravelModeSelector = ({ mode, onChange, selectedTravel, options, onTravelC
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                <div className={`w-4 h-4 rounded-full border-2 ${
                   selectedTravel.id === travel.id ? 'border-cyan-500 bg-cyan-500' : 'border-gray-300'
-                }`}>
-                  {selectedTravel.id === travel.id && (
-                    <CheckIcon className="w-3 h-3 text-white" />
-                  )}
-                </div>
+                }`}></div>
                 <div>
                   <p className="font-semibold text-gray-800">{travel.name}</p>
                   <p className="text-sm text-gray-600">{travel.type}</p>
@@ -150,113 +113,119 @@ const dummyPokharaTravel = [
 ];
 
 export default function SecondPage({ onBack }) {
+  // --- State for Travel Section ---
   const [selectedFlight, setSelectedFlight] = useState(dummyFlights.reduce((min, f) => f.price < min.price ? f : min, dummyFlights[0]));
+
+  // --- State for Kathmandu Section ---
   const [hotels, setHotels] = useState(dummyHotels);
   const [selectedHotel, setSelectedHotel] = useState(dummyHotels.find(h => h.recommended) || dummyHotels[0]);
   const [selectedKathmanduActivityIds, setSelectedKathmanduActivityIds] = useState([1, 2, 3, 4]);
-  const [selectedPokharaActivityIds, setSelectedPokharaActivityIds] = useState([1, 2, 3, 4]);
-  const [showPokhara, setShowPokhara] = useState(true);
-  const [pokharaTravelMode, setPokharaTravelMode] = useState('Flight');
-  
-  const travelOptions = dummyPokharaTravel.filter(t => t.type === pokharaTravelMode);
-  const [selectedPokharaTravel, setSelectedPokharaTravel] = useState(travelOptions.find(t => t.recommended) || travelOptions[0]);
+
+  // --- State for Pokhara Section ---
   const [selectedPokharaHotel, setSelectedPokharaHotel] = useState({ id: 1, name: 'Temple Tree Resort', price: 100, recommended: true });
+  const [selectedPokharaActivityIds, setSelectedPokharaActivityIds] = useState([1, 2, 3, 4]);
+
+  // --- Split Pokhara Travel into two directions ---
+  const [pokharaTravelModeKtmToPkr, setPokharaTravelModeKtmToPkr] = useState('Flight');
+  const [pokharaTravelModePkrToKtm, setPokharaTravelModePkrToKtm] = useState('Flight');
+  const travelOptionsKtmToPkr = dummyPokharaTravel.filter(t => t.type === pokharaTravelModeKtmToPkr);
+  const travelOptionsPkrToKtm = dummyPokharaTravel.filter(t => t.type === pokharaTravelModePkrToKtm);
+  const [selectedPokharaTravelKtmToPkr, setSelectedPokharaTravelKtmToPkr] = useState(travelOptionsKtmToPkr.find(t => t.recommended) || travelOptionsKtmToPkr[0]);
+  const [selectedPokharaTravelPkrToKtm, setSelectedPokharaTravelPkrToKtm] = useState(travelOptionsPkrToKtm.find(t => t.recommended) || travelOptionsPkrToKtm[0]);
 
   useEffect(() => {
-    async function fetchHotelsWithImages() {
-      setHotels(dummyHotels);
-      setSelectedHotel(dummyHotels.find(h => h.recommended) || dummyHotels[0]);
-    }
-    fetchHotelsWithImages();
+    setSelectedPokharaTravelKtmToPkr(travelOptionsKtmToPkr.find(t => t.recommended) || travelOptionsKtmToPkr[0]);
+  }, [pokharaTravelModeKtmToPkr]);
+  useEffect(() => {
+    setSelectedPokharaTravelPkrToKtm(travelOptionsPkrToKtm.find(t => t.recommended) || travelOptionsPkrToKtm[0]);
+  }, [pokharaTravelModePkrToKtm]);
+
+  useEffect(() => {
+    setHotels(dummyHotels);
+    setSelectedHotel(dummyHotels.find(h => h.recommended) || dummyHotels[0]);
   }, []);
 
-  useEffect(() => {
-    const newTravelOptions = dummyPokharaTravel.filter(t => t.type === pokharaTravelMode);
-    setSelectedPokharaTravel(newTravelOptions.find(t => t.recommended) || newTravelOptions[0]);
-  }, [pokharaTravelMode]);
-
+  // --- Handlers ---
   const handleToggleKathmanduActivity = (id) => {
     setSelectedKathmanduActivityIds(ids => ids.includes(id) ? ids.filter(aid => aid !== id) : [...ids, id]);
   };
-
   const handleTogglePokharaActivity = (id) => {
     setSelectedPokharaActivityIds(ids => ids.includes(id) ? ids.filter(aid => aid !== id) : [...ids, id]);
-    if (selectedPokharaActivityIds.length === 1 && selectedPokharaActivityIds[0] === id) setShowPokhara(false);
-    else if (!selectedPokharaActivityIds.includes(id)) setShowPokhara(true);
+  };
+  const handlePokharaTravelKtmToPkrChange = (id) => {
+    setSelectedPokharaTravelKtmToPkr(dummyPokharaTravel.find(t => t.id === id));
+  };
+  const handlePokharaTravelPkrToKtmChange = (id) => {
+    setSelectedPokharaTravelPkrToKtm(dummyPokharaTravel.find(t => t.id === id));
   };
 
-  const handlePokharaTravelChange = (id) => {
-    if (selectedPokharaActivityIds.length > 0 && id === null) return;
-    setSelectedPokharaTravel(dummyPokharaTravel.find(t => t.id === id));
-  };
-
+  // --- Receipt Items ---
   const receiptItems = [
     { type: 'Flight', desc: `NYC → KTM (${selectedFlight.airline})`, price: selectedFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
     { type: 'Hotel', desc: `Kathmandu: ${selectedHotel.name}`, price: selectedHotel.price, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
-    ...dummyKathmanduActivities.filter(a => selectedKathmanduActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <TicketIcon className="w-5 h-5 text-pink-600" /> }))
+    ...dummyKathmanduActivities.filter(a => selectedKathmanduActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <TicketIcon className="w-5 h-5 text-pink-600" /> })),
+    { type: 'Travel', desc: `KTM → PKR (${selectedPokharaTravelKtmToPkr.name})`, price: selectedPokharaTravelKtmToPkr.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
+    { type: 'Hotel', desc: `Pokhara: ${selectedPokharaHotel.name}`, price: selectedPokharaHotel.price, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
+    ...dummyPokharaActivities.filter(a => selectedPokharaActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <MapPinIcon className="w-5 h-5 text-cyan-600" /> })),
+    { type: 'Travel', desc: `PKR → KTM (${selectedPokharaTravelPkrToKtm.name})`, price: selectedPokharaTravelPkrToKtm.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> }
   ];
-
-  if (showPokhara && selectedPokharaActivityIds.length > 0) {
-    receiptItems.push(
-      { type: 'Travel', desc: `KTM → PKR (${selectedPokharaTravel.name})`, price: selectedPokharaTravel.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
-      { type: 'Hotel', desc: `Pokhara: ${selectedPokharaHotel.name}`, price: selectedPokharaHotel.price, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
-      ...dummyPokharaActivities.filter(a => selectedPokharaActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <MapPinIcon className="w-5 h-5 text-cyan-600" /> })),
-      { type: 'Travel', desc: `PKR → KTM (${selectedPokharaTravel.name})`, price: selectedPokharaTravel.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> }
-    );
-  }
-
   const totalPrice = receiptItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <>
       <WebFonts />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-sans">
-        {/* Enhanced Navigation */}
-        <nav className="sticky top-0 z-50 glass-effect shadow-xl border-b border-white/20">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <span className="text-4xl font-display font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
-              yatra
-            </span>
-            <div className="text-sm text-gray-600 font-medium">
-              Plan your perfect journey
+      <div className="min-h-screen bg-gray-50 font-sans">
+        {/* Navbar */}
+        <nav className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">Y</span>
+                </div>
+                <span className="text-xl font-display font-bold text-gray-900">Yatra</span>
+              </div>
+              <div className="hidden md:flex items-center space-x-8">
+                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Destinations</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Packages</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">About</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Contact</a>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button className="text-gray-600 hover:text-gray-900 font-medium">Sign In</button>
+                <button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
+                  Sign Up
+                </button>
+              </div>
             </div>
           </div>
         </nav>
 
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-display font-bold text-gray-900 mb-4">
-              Customize Your <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Dream Trip</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Tailor every aspect of your Nepal adventure with our premium travel packages
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* Travel Section */}
-            <div className="space-y-8">
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+          {/* Travel Section */}
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <ArrowRightIcon className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-3xl font-display font-bold text-gray-900">Travel</h2>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Flight to Kathmandu */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                    <ArrowRightIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">To Kathmandu</h2>
-                </div>
-                <AirlineLogo airlineName={selectedFlight.airline} className="mb-6" />
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">NYC → Kathmandu</h3>
+                <AirlineLogo airlineName={selectedFlight.airline} airlineCode={selectedFlight.code} className="mb-6 h-20 w-full object-contain" />
                 <div className="space-y-3 mb-6">
                   <p className="text-gray-700 font-medium">New York City → Kathmandu</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-600">
                     {selectedFlight.layovers.length ? `via ${selectedFlight.layovers.map(code => ({ DOH: 'Doha', DEL: 'Delhi', DXB: 'Dubai' }[code] || code)).join(', ')}` : 'Non-stop'} • {selectedFlight.duration}
                   </p>
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-bold text-blue-600">
                     ${selectedFlight.price}
                   </div>
                 </div>
                 <select 
-                  className="w-full p-4 border-2 border-gray-200 rounded-xl bg-white text-gray-700 hover:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 font-medium" 
+                  className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                   value={selectedFlight.id} 
                   onChange={e => { const f = dummyFlights.find(f => f.id === Number(e.target.value)); setSelectedFlight(f); }}
                 >
@@ -265,110 +234,99 @@ export default function SecondPage({ onBack }) {
                   ))}
                 </select>
               </div>
-
-              {/* Enhanced Travel Mode Selectors */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <ArrowRightIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Kathmandu → Pokhara</h2>
-                </div>
+              {/* Kathmandu to Pokhara */}
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">KTM → Pokhara</h3>
                 <TravelModeSelector
-                  mode={pokharaTravelMode}
-                  onChange={setPokharaTravelMode}
-                  selectedTravel={selectedPokharaTravel}
-                  options={travelOptions}
-                  onTravelChange={handlePokharaTravelChange}
+                  mode={pokharaTravelModeKtmToPkr}
+                  onChange={setPokharaTravelModeKtmToPkr}
+                  selectedTravel={selectedPokharaTravelKtmToPkr}
+                  options={travelOptionsKtmToPkr}
+                  onTravelChange={handlePokharaTravelKtmToPkrChange}
+                  title="Travel Mode"
                 />
               </div>
-
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <ArrowRightIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Pokhara → Kathmandu</h2>
-                </div>
+              {/* Pokhara to Kathmandu */}
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Pokhara → KTM</h3>
                 <TravelModeSelector
-                  mode={pokharaTravelMode}
-                  onChange={setPokharaTravelMode}
-                  selectedTravel={selectedPokharaTravel}
-                  options={travelOptions}
-                  onTravelChange={handlePokharaTravelChange}
+                  mode={pokharaTravelModePkrToKtm}
+                  onChange={setPokharaTravelModePkrToKtm}
+                  selectedTravel={selectedPokharaTravelPkrToKtm}
+                  options={travelOptionsPkrToKtm}
+                  onTravelChange={handlePokharaTravelPkrToKtmChange}
+                  title="Travel Mode"
                 />
               </div>
             </div>
+          </section>
 
-            {/* Kathmandu Section */}
-            <div className="space-y-8">
-              {/* Kathmandu Hotel */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                    <BuildingOffice2Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Kathmandu Hotel</h2>
-                </div>
-                <div className="relative overflow-hidden rounded-xl mb-6">
-                  <img src={selectedHotel.image} alt={selectedHotel.name} className="w-full h-48 object-cover transition-transform duration-500 hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                </div>
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-gray-900">{selectedHotel.name}</h3>
-                    {selectedHotel.recommended && (
-                      <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                        ⭐ Recommended
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-600">{selectedHotel.address}</p>
-                  <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
-                    ${selectedHotel.price}
-                  </div>
-                </div>
-                <select 
-                  className="w-full p-4 border-2 border-gray-200 rounded-xl bg-white text-gray-700 hover:border-green-300 focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300 font-medium" 
-                  value={selectedHotel.id} 
-                  onChange={e => setSelectedHotel(hotels.find(h => h.id === Number(e.target.value)))}
-                >
-                  {hotels.map(hotel => (
-                    <option key={hotel.id} value={hotel.id}>{hotel.name} - ${hotel.price}{hotel.recommended ? ' ⭐' : ''}</option>
-                  ))}
-                </select>
+          {/* Kathmandu Section */}
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                <BuildingOffice2Icon className="w-5 h-5 text-white" />
               </div>
-
-              {/* Kathmandu Activities */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl flex items-center justify-center">
-                    <TicketIcon className="w-6 h-6 text-white" />
+              <h2 className="text-3xl font-display font-bold text-gray-900">Kathmandu</h2>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Kathmandu Hotel */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-gray-900">Hotel</h3>
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="relative overflow-hidden rounded-lg mb-6">
+                    <img src={selectedHotel.image} alt={selectedHotel.name} className="w-full h-48 object-cover" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Kathmandu Activities</h2>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xl font-bold text-gray-900">{selectedHotel.name}</h4>
+                      {selectedHotel.recommended && (
+                        <span className="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-medium">
+                          ⭐ Recommended
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-gray-600">{selectedHotel.address}</p>
+                    <div className="text-3xl font-bold text-green-600">
+                      ${selectedHotel.price}
+                    </div>
+                  </div>
+                  <select 
+                    className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+                    value={selectedHotel.id} 
+                    onChange={e => setSelectedHotel(hotels.find(h => h.id === Number(e.target.value)))}
+                  >
+                    {hotels.map(hotel => (
+                      <option key={hotel.id} value={hotel.id}>{hotel.name} - ${hotel.price}{hotel.recommended ? ' ⭐' : ''}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
+              </div>
+              {/* Kathmandu Activities */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-gray-900">Activities</h3>
+                <div className="space-y-3">
                   {dummyKathmanduActivities.map(act => {
                     const selected = selectedKathmanduActivityIds.includes(act.id);
                     return (
                       <button 
                         key={act.id} 
                         onClick={() => handleToggleKathmanduActivity(act.id)} 
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                        className={`w-full flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
                           selected 
-                            ? 'border-pink-500 bg-pink-50 shadow-lg' 
-                            : 'border-gray-200 bg-white hover:border-pink-300 hover:bg-pink-50'
+                            ? 'border-pink-200 bg-pink-50' 
+                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
                         <span className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                             selected ? 'border-pink-500 bg-pink-500' : 'border-gray-300'
                           }`}>
-                            {selected && <CheckIcon className="w-4 h-4 text-white" />}
+                            {selected && <CheckIcon className="w-3 h-3 text-white" />}
                           </div>
                           <span className="font-medium text-gray-800">{act.name}</span>
                         </span>
-                        <span className={`font-bold text-lg ${selected ? 'text-cyan-700' : 'text-gray-600'}`}>
+                        <span className={`font-bold text-lg ${selected ? 'text-pink-600' : 'text-gray-600'}`}>
                           ${act.price}
                         </span>
                       </button>
@@ -377,85 +335,74 @@ export default function SecondPage({ onBack }) {
                 </div>
               </div>
             </div>
+          </section>
 
-            {/* Pokhara Section */}
-            <div className="space-y-8">
-              {/* Pokhara Hotel */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <BuildingOffice2Icon className="w-6 h-6 text-white" />
+          {/* Pokhara Section */}
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center">
+                <MapPinIcon className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-3xl font-display font-bold text-gray-900">Pokhara</h2>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Pokhara Hotel (dropdown, image, address, price, like Kathmandu) */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-gray-900">Hotel</h3>
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="relative overflow-hidden rounded-lg mb-6">
+                    <img src={selectedPokharaHotel.image} alt={selectedPokharaHotel.name} className="w-full h-48 object-cover" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Pokhara Hotel</h2>
-                </div>
-                <div className="space-y-4 mb-6">
-                  {dummyPokharaHotels.map(hotel => (
-                    <div
-                      key={hotel.id}
-                      onClick={() => setSelectedPokharaHotel(hotel)}
-                      className={`p-4 rounded-xl cursor-pointer transition-all duration-300 border-2 ${
-                        selectedPokharaHotel.id === hotel.id
-                          ? 'border-cyan-500 bg-cyan-50 shadow-lg transform scale-105'
-                          : 'border-gray-200 bg-white hover:border-cyan-300 hover:bg-cyan-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            selectedPokharaHotel.id === hotel.id ? 'border-cyan-500 bg-cyan-500' : 'border-gray-300'
-                          }`}>
-                            {selectedPokharaHotel.id === hotel.id && (
-                              <CheckIcon className="w-3 h-3 text-white" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-800">{hotel.name}</p>
-                            {hotel.recommended && (
-                              <span className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full mt-1">
-                                ⭐ Recommended
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xl font-bold text-cyan-700">${hotel.price}</p>
-                        </div>
-                      </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xl font-bold text-gray-900">{selectedPokharaHotel.name}</h4>
+                      {selectedPokharaHotel.recommended && (
+                        <span className="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-medium">
+                          ⭐ Recommended
+                        </span>
+                      )}
                     </div>
-                  ))}
+                    <p className="text-gray-600">{selectedPokharaHotel.address}</p>
+                    <div className="text-3xl font-bold text-cyan-600">
+                      ${selectedPokharaHotel.price}
+                    </div>
+                  </div>
+                  <select 
+                    className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent" 
+                    value={selectedPokharaHotel.id} 
+                    onChange={e => setSelectedPokharaHotel(dummyPokharaHotels.find(h => h.id === Number(e.target.value)))}
+                  >
+                    {dummyPokharaHotels.map(hotel => (
+                      <option key={hotel.id} value={hotel.id}>{hotel.name} - ${hotel.price}{hotel.recommended ? ' ⭐' : ''}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
-
-              {/* Pokhara Activities */}
-              <div className="gradient-border rounded-2xl p-6 premium-shadow hover:shadow-2xl transition-all duration-500 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <MapPinIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Pokhara Activities</h2>
-                </div>
-                <div className="grid grid-cols-1 gap-4">
+              {/* Pokhara Activities (same as Kathmandu Activities) */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-gray-900">Activities</h3>
+                <div className="space-y-3">
                   {dummyPokharaActivities.map(act => {
                     const selected = selectedPokharaActivityIds.includes(act.id);
                     return (
                       <button 
                         key={act.id} 
                         onClick={() => handleTogglePokharaActivity(act.id)} 
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                        className={`w-full flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
                           selected 
-                            ? 'border-cyan-500 bg-cyan-50 shadow-lg' 
-                            : 'border-gray-200 bg-white hover:border-cyan-300 hover:bg-cyan-50'
+                            ? 'border-cyan-200 bg-cyan-50' 
+                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
                         <span className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                             selected ? 'border-cyan-500 bg-cyan-500' : 'border-gray-300'
                           }`}>
-                            {selected && <CheckIcon className="w-4 h-4 text-white" />}
+                            {selected && <CheckIcon className="w-3 h-3 text-white" />}
                           </div>
                           <span className="font-medium text-gray-800">{act.name}</span>
                         </span>
-                        <span className={`font-bold text-lg ${selected ? 'text-cyan-700' : 'text-gray-600'}`}>
+                        <span className={`font-bold text-lg ${selected ? 'text-cyan-600' : 'text-gray-600'}`}>
                           ${act.price}
                         </span>
                       </button>
@@ -464,72 +411,56 @@ export default function SecondPage({ onBack }) {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Enhanced Receipt Section */}
-          <div className="gradient-border rounded-3xl p-8 premium-shadow bg-white">
+          {/* Trip Summary */}
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-display font-bold text-gray-900 mb-2">Trip Summary</h1>
+              <h2 className="text-3xl font-display font-bold text-gray-900 mb-2">Trip Summary</h2>
               <p className="text-gray-600">Your personalized Nepal adventure package</p>
             </div>
-            <div className="max-w-4xl mx-auto">
-              <div className="space-y-6">
-                {receiptItems.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-white border border-gray-100 hover:shadow-md transition-all duration-300">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{item.desc}</p>
-                        <p className="text-sm text-gray-500 capitalize">{item.type}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-bold text-gray-900">${item.price}</span>
-                    </div>
-                  </div>
-                ))}
-                {/* Taxes and fees */}
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-100 to-gray-50 border border-gray-200">
+            <div className="max-w-2xl mx-auto space-y-3">
+              {receiptItems.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 font-bold">%</span>
+                    <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+                      {item.icon}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-700">Taxes & Fees</p>
-                      <p className="text-sm text-gray-500">13% service charge</p>
+                      <p className="font-semibold text-gray-900">{item.desc}</p>
+                      <p className="text-sm text-gray-600 capitalize">{item.type}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-700">${(totalPrice * 0.13).toFixed(2)}</span>
+                    <span className="text-xl font-bold text-gray-900">${item.price}</span>
                   </div>
                 </div>
-                {/* Total */}
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 p-6 text-white premium-shadow">
-                  <div className="absolute inset-0 bg-black/10"></div>
-                  <div className="relative flex items-center justify-between">
-                    <div>
-                      <p className="text-2xl font-bold mb-1">Total Amount</p>
-                      <p className="text-blue-100">All inclusive pricing</p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-5xl font-bold">${(totalPrice * 1.13).toFixed(2)}</span>
-                    </div>
+              ))}
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+                    <span className="text-gray-600 font-bold">%</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-700">Taxes & Fees</p>
+                    <p className="text-sm text-gray-600">13% service charge</p>
                   </div>
                 </div>
-                {/* Action Buttons */}
-                <div className="flex gap-4 pt-6">
-                  <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 premium-shadow">
-                    Book This Trip
-                  </button>
-                  <button className="flex-1 border-2 border-gray-300 text-gray-700 py-4 px-8 rounded-xl font-bold text-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-300">
-                    Save for Later
-                  </button>
+                <div className="text-right">
+                  <span className="text-xl font-bold text-gray-700">${(totalPrice * 0.13).toFixed(2)}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-4 rounded-lg bg-blue-600 text-white">
+                <div>
+                  <p className="text-lg font-bold mb-1">Total Amount</p>
+                  <p className="text-blue-100 text-xs">All inclusive pricing</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-bold">${(totalPrice * 1.13).toFixed(2)}</span>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </>
