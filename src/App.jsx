@@ -261,6 +261,34 @@ function MainPage() {
       <style>{themeStyle}</style>
       <style>{selectInputStyle}</style>
       <style>{`
+.custom-select__menu {
+  border-radius: 1rem !important;
+  border: 2px solid #144D4A !important;
+  background: #fff !important;
+  box-shadow: 0 4px 24px 0 rgba(20,77,74,0.18) !important;
+  overflow: hidden !important;
+  z-index: 9999 !important;
+}
+.custom-select__option {
+  background: #fff !important;
+  color: #144D4A !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+.custom-select__option--is-focused {
+  background: #FFBFAE !important;
+  color: #144D4A !important;
+}
+.custom-select__option--is-selected {
+  background: #F26B3A !important;
+  color: #fff !important;
+}
+.custom-select__menu-list {
+  max-height: 160px !important;
+  padding: 0 !important;
+  overflow-y: auto !important;
+}
+`}</style>
+      <style>{`
 @keyframes fadeinout {
   0% { opacity: 0; }
   10% { opacity: 1; }
@@ -278,7 +306,7 @@ function MainPage() {
           <div className="w-full flex justify-between items-center px-16 py-3">
             <div className="flex items-center gap-2">
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="focus:outline-none">
-                <img src={logoImg} alt="Yatra Logo" className="h-10 w-auto mt-2" />
+                <img src={logoImg} alt="Yaan Logo" className="h-10 w-auto mt-2" />
               </button>
             </div>
             <nav className="flex gap-8 font-medium text-gray-800">
@@ -306,9 +334,6 @@ function MainPage() {
           {/* Overlay content at the bottom of the image */}
           <div className="absolute bottom-0 left-0 w-full flex flex-col items-center z-10 pb-12">
             {/* Tagline */}
-            <span className="block text-4xl md:text-5xl font-extrabold text-center mb-4" style={{ color: '#FFBFAE', textShadow: '0 2px 16px #144D4A' }}>
-              Travel like no one else...
-            </span>
             {/* Where are you coming from? Prompt */}
             <div className="w-full max-w-4xl mb-2 flex justify-center">
               <span className="block text-2xl font-bold text-white mb-2 text-center drop-shadow">Where are you coming from?</span>
@@ -565,13 +590,38 @@ function MainPage() {
         </div>
         )}
         {/* Footer */}
-        <footer className="w-full bg-[#F8FAFC] text-gray-800 py-6 mt-16 flex flex-col items-center gap-2 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row md:justify-between w-full max-w-5xl px-4 items-center">
-            <span className="font-bold">&copy; {new Date().getFullYear()} Yatra</span>
-            <div className="flex flex-col md:flex-row gap-2 md:gap-6 items-center mt-2 md:mt-0">
-              <span>Email: <a href="mailto:info@yatra.com" className="underline">info@yatra.com</a></span>
-              <span>Phone: <a href="tel:+1234567890" className="underline">+1 234 567 890</a></span>
+        <footer className="w-full bg-[#F8FAFC] text-gray-800 mt-16 border-t border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="flex flex-col items-start">
+              <img src={logoImg} alt="Yaan Logo" className="h-12 w-auto mb-2" />
+              <p className="mt-2 text-sm text-gray-500">Travel made easy and memorable.</p>
             </div>
+            <div>
+              <h4 className="font-bold text-lg mb-3 text-[#144D4A]">Company</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-orange-500 transition">Home</a></li>
+                <li><a href="#" className="hover:text-orange-500 transition">Discover</a></li>
+                <li><a href="#" className="hover:text-orange-500 transition">Special Deals</a></li>
+                <li><a href="#" className="hover:text-orange-500 transition">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-lg mb-3 text-[#144D4A]">Support</h4>
+              <ul className="space-y-2">
+                <li>Email: <a href="mailto:info@yaan.com" className="underline hover:text-orange-500 transition">info@yaan.com</a></li>
+                <li>Phone: <a href="tel:+1234567890" className="underline hover:text-orange-500 transition">+1 234 567 890</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-lg mb-3 text-[#144D4A]">Legal</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-orange-500 transition">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-orange-500 transition">Terms of Use</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 py-4 text-center text-sm text-gray-500 bg-[#F8FAFC]">
+            &copy; {new Date().getFullYear()} Yaan. All rights reserved.
           </div>
         </footer>
       </div>
