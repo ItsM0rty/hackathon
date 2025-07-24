@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SecondPage from './SecondPage';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import countryCityData from './data/countries-cities.json';
 
 const LOCATIONS = [
   { label: 'Kathmandu', value: 'kathmandu' },
@@ -20,19 +21,11 @@ const RECOMMENDATIONS = {
   ],
 };
 
-const COUNTRIES = [
-  { label: 'United States', value: 'us', states: ['California', 'New York', 'Texas', 'Florida', 'Illinois'] },
-  { label: 'India', value: 'india', states: ['Delhi', 'Maharashtra', 'Karnataka', 'West Bengal', 'Tamil Nadu'] },
-  { label: 'United Kingdom', value: 'uk', states: ['England', 'Scotland', 'Wales', 'Northern Ireland'] },
-  { label: 'Nepal', value: 'nepal', states: ['Bagmati', 'Gandaki', 'Lumbini', 'Province 1', 'Province 2'] },
-  { label: 'Other', value: 'other', states: [] },
-];
-
 function MainPage() {
   const [selectedLocation, setSelectedLocation] = useState('kathmandu');
   const [arriving, setArriving] = useState('kathmandu');
-  const [country, setCountry] = useState('us');
-  const [state, setState] = useState('California');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   // Remove page state, use router instead
 
   const handleLocationChange = (loc) => {
@@ -42,12 +35,10 @@ function MainPage() {
 
   const handleCountryChange = (val) => {
     setCountry(val);
-    const found = COUNTRIES.find(c => c.value === val);
-    setState(found && found.states.length > 0 ? found.states[0] : '');
+    setCity('');
   };
-
-  const handleStateChange = (val) => {
-    setState(val);
+  const handleCityChange = (val) => {
+    setCity(val);
   };
 
   // Helper for recommendations order
@@ -58,12 +49,8 @@ function MainPage() {
 
   // Helper for displaying origin
   const getOriginDisplay = () => {
-    const countryObj = COUNTRIES.find(c => c.value === country);
-    if (!countryObj) return '';
-    if (countryObj.states.length > 0 && state) {
-      return `${state}, ${countryObj.label}`;
-    }
-    return countryObj.label;
+    if (!country || !city) return '';
+    return `${city}, ${country}`;
   };
 
   return (
@@ -84,37 +71,43 @@ function MainPage() {
         </div>
       </header>
 
+      {/* Where are you coming from? Prompt */}
+      <div className="w-full max-w-4xl mb-2 flex justify-center">
+        <span className="block text-2xl font-bold text-gray-700 mb-2 text-center">Where are you coming from?</span>
+      </div>
+
       {/* Hero Section */}
       {/* Location Selector */}
-      <section className="w-full max-w-4xl bg-white rounded-full shadow flex flex-row items-center px-6 py-4 mb-8 gap-4 justify-between">
-        <div className="flex flex-col md:flex-row gap-4 items-center flex-1">
-          <div className="flex flex-col">
-            <span className="text-xs text-gray-500">Where are you coming from?</span>
+      <section className="w-full max-w-4xl bg-white rounded-full shadow flex flex-row items-center px-6 py-4 mb-8 gap-4 justify-center">
+        <div className="flex flex-row gap-4 items-center">
+          <select
+            className="min-w-[200px] px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={country}
+            onChange={e => handleCountryChange(e.target.value)}
+          >
+            <option value="">Select Country</option>
+            {/* Common countries at the top */}
+            {['United States', 'India', 'United Kingdom', 'France', 'Japan', 'Australia', 'Canada', 'Singapore'].map(c =>
+              countryCityData[c] ? <option key={c} value={c}>{c}</option> : null
+            )}
+            {/* Lesser-known countries at the bottom */}
+            {Object.keys(countryCityData)
+              .filter(c => !['United States', 'India', 'United Kingdom', 'France', 'Japan', 'Australia', 'Canada', 'Singapore'].includes(c))
+              .sort()
+              .map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {country && (
             <select
-              className="mt-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={country}
-              onChange={e => handleCountryChange(e.target.value)}
+              className="min-w-[200px] ml-2 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={city}
+              onChange={e => handleCityChange(e.target.value)}
             >
-              {COUNTRIES.map(c => (
-                <option key={c.value} value={c.value}>{c.label}</option>
+              <option value="">Select City</option>
+              {countryCityData[country].map(cityName => (
+                <option key={cityName} value={cityName}>{cityName}</option>
               ))}
             </select>
-            {COUNTRIES.find(c => c.value === country)?.states.length > 0 && (
-              <select
-                className="mt-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={state}
-                onChange={e => handleStateChange(e.target.value)}
-              >
-                {COUNTRIES.find(c => c.value === country).states.map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col items-end">
-          <span className="text-xs text-gray-500">City</span>
-          <span className="mt-1 px-4 py-2 rounded-full border border-gray-300 bg-gray-50 font-semibold">Kathmandu</span>
+          )}
         </div>
       </section>
 
@@ -126,12 +119,6 @@ function MainPage() {
           <span>to</span>
           <span className="text-blue-600">{LOCATIONS.find(l => l.value === selectedLocation)?.label}</span>
           <span>✈️</span>
-        </div>
-        <div className="w-full h-2 flex items-center justify-center mt-2">
-          <div className="w-2/3 h-1 bg-blue-200 rounded-full relative">
-            <div className="absolute left-0 -top-2 text-blue-600 text-xs">{getOriginDisplay()}</div>
-            <div className="absolute right-0 -top-2 text-blue-600 text-xs">{LOCATIONS.find(l => l.value === selectedLocation)?.label}</div>
-          </div>
         </div>
       </section>
 

@@ -1,0 +1,15 @@
+{
+  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco", "Miami", "Seattle", "Boston", "Dallas", "Atlanta"],
+  "India": ["Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata", "Hyderabad", "Pune", "Ahmedabad", "Jaipur", "Lucknow"],
+  "United Kingdom": ["London", "Manchester", "Birmingham", "Liverpool", "Leeds", "Glasgow", "Edinburgh", "Bristol", "Sheffield", "Cardiff"],
+  "France": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille"],
+  "Japan": ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Nagoya", "Sapporo", "Fukuoka", "Kobe", "Hiroshima", "Sendai"],
+  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra", "Gold Coast", "Newcastle", "Wollongong", "Hobart"],
+  "Canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg", "Quebec City", "Hamilton", "Kitchener"],
+  "Singapore": ["Singapore"],
+  "Qatar": ["Doha", "Al Rayyan", "Umm Salal Muhammad"],
+  "Portugal": ["Lisbon", "Porto", "Coimbra"],
+  "South Africa": ["Johannesburg", "Cape Town", "Durban"],
+  "Iceland": ["Reykjavik", "Akureyri", "Kopavogur"],
+  "Botswana": ["Gaborone", "Francistown", "Maun"]
+} 
