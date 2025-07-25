@@ -191,8 +191,18 @@ const getCitiesWithFlightData = () => {
   return cities.sort();
 };
 
-// Get available destination cities from flight pricing data
-const availableDestinations = getCitiesWithFlightData();
+// Get available destination cities from flight pricing data - use all cities from all countries
+const getAllCitiesFromFlightData = () => {
+  const cities = [];
+  for (const [country, data] of Object.entries(flightPricingData.routes)) {
+    if (data.major_cities) {
+      cities.push(...Object.keys(data.major_cities).map(city => ({ city, country })));
+    }
+  }
+  return cities.sort((a, b) => a.city.localeCompare(b.city));
+};
+
+const availableDestinations = getAllCitiesFromFlightData();
 
 // Enhanced return flight data using pricing data
 const getReturnFlightData = (cityName) => {
@@ -215,7 +225,32 @@ const getReturnFlightData = (cityName) => {
   }));
 };
 
-export default function SecondPage({ selectedActivities = [], onBack }) {
+// Helper function to get flight data from pricing JSON based on origin
+const getFlightDataForOrigin = (country, city) => {
+  if (!country || !city) return [];
+  
+  const countryData = flightPricingData.routes[country];
+  if (!countryData || !countryData.major_cities || !countryData.major_cities[city]) {
+    return [];
+  }
+  
+  const cityData = countryData.major_cities[city];
+  if (!cityData.to_kathmandu) return [];
+  
+  return cityData.to_kathmandu.map((flight, index) => ({
+    id: index + 1,
+    airline: flight.airline,
+    airline_code: flight.airline_code,
+    price: flight.price,
+    from: cityData.airport_code || city.substring(0, 3).toUpperCase(),
+    to: 'KTM',
+    layovers: flight.layovers || [],
+    duration: flight.duration,
+    recommended: flight.recommended || false
+  }));
+};
+
+export default function SecondPage({ selectedActivities = [], selectedOrigin = {}, onBack }) {
   // Debug logging
   React.useEffect(() => {
     console.log('📍 SecondPage received selectedActivities:', selectedActivities);
@@ -232,14 +267,19 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
 
   // --- State for Travel Section ---
-  const [selectedFlight, setSelectedFlight] = useState(dummyFlights.reduce((min, f) => f.price < min.price ? f : min, dummyFlights[0]));
+  const originFlights = getFlightDataForOrigin(selectedOrigin.country, selectedOrigin.city);
+  const availableFlights = originFlights.length > 0 ? originFlights : dummyFlights;
+  const [selectedFlight, setSelectedFlight] = useState(() => {
+    const flights = availableFlights;
+    return flights.find(f => f.recommended) || flights.reduce((min, f) => f.price < min.price ? f : min, flights[0]);
+  });
   
   // --- State for Return Flight Section ---
   const [wantsReturnFlight, setWantsReturnFlight] = useState(false);
-  const [selectedReturnCity, setSelectedReturnCity] = useState(availableDestinations[0] || 'New York');
-  const [availableReturnFlights, setAvailableReturnFlights] = useState(() => getReturnFlightData(availableDestinations[0] || 'New York'));
+  const [selectedReturnCity, setSelectedReturnCity] = useState(availableDestinations[0]?.city || 'New York');
+  const [availableReturnFlights, setAvailableReturnFlights] = useState(() => getReturnFlightData(availableDestinations[0]?.city || 'New York'));
   const [selectedReturnFlight, setSelectedReturnFlight] = useState(() => {
-    const flights = getReturnFlightData(availableDestinations[0] || 'New York');
+    const flights = getReturnFlightData(availableDestinations[0]?.city || 'New York');
     return flights.find(f => f.recommended) || flights[0];
   });
   const [citySearchTerm, setCitySearchTerm] = useState('');
@@ -366,6 +406,17 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
     setEnabledActivityIds(newEnabledIds);
   }, [selectedActivities]);
 
+  // Update selected flight when origin changes
+  useEffect(() => {
+    if (selectedOrigin.country && selectedOrigin.city) {
+      const newFlights = getFlightDataForOrigin(selectedOrigin.country, selectedOrigin.city);
+      if (newFlights.length > 0) {
+        const recommendedFlight = newFlights.find(f => f.recommended) || newFlights.reduce((min, f) => f.price < min.price ? f : min, newFlights[0]);
+        setSelectedFlight(recommendedFlight);
+      }
+    }
+  }, [selectedOrigin]);
+
   // --- State for Kathmandu Section ---
   const [hotels, setHotels] = useState(dummyHotels);
   const [selectedHotel, setSelectedHotel] = useState(dummyHotels.find(h => h.recommended) || dummyHotels[0]);
@@ -464,8 +515,9 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
   };
 
   // Filter cities based on search term
-  const filteredDestinations = availableDestinations.filter(city =>
-    city.toLowerCase().includes(citySearchTerm.toLowerCase())
+  const filteredDestinations = availableDestinations.filter(dest =>
+    dest.city.toLowerCase().includes(citySearchTerm.toLowerCase()) ||
+    dest.country.toLowerCase().includes(citySearchTerm.toLowerCase())
   );
 
   // Determine if Pokhara section should be shown (only if Pokhara activities were originally selected)
@@ -477,7 +529,7 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
 
   // --- Receipt Items ---
   const receiptItems = [
-    { type: 'Flight', desc: `NYC → KTM (${selectedFlight.airline})`, price: selectedFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
+    { type: 'Flight', desc: `${selectedOrigin.city || 'Origin'} → KTM (${selectedFlight.airline})`, price: selectedFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
     { type: 'Hotel', desc: `Kathmandu: ${selectedHotel.name} (${kathmanduDays} nights)`, price: selectedHotel.price * kathmanduDays, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
     ...enabledKathmanduActivities.map(activity => ({ 
       type: 'Activity', 
@@ -556,12 +608,12 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
             <div className={`grid grid-cols-1 ${showPokharaSection ? 'lg:grid-cols-3' : 'lg:grid-cols-1 max-w-md mx-auto'} gap-8`}>
               {/* Flight to Kathmandu */}
               <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">NYC → Kathmandu</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">{selectedOrigin.city || 'Origin'} → Kathmandu</h3>
                 <AirlineLogo airlineName={selectedFlight.airline} airlineCode={selectedFlight.code} className="mb-6 h-20 w-full object-contain" />
                 <div className="space-y-3 mb-6">
-                  <p className="text-gray-700 font-medium">New York City → Kathmandu</p>
+                  <p className="text-gray-700 font-medium">{selectedOrigin.city || 'Origin'} → Kathmandu</p>
                   <p className="text-sm text-gray-600">
-                    {selectedFlight.layovers.length ? `via ${selectedFlight.layovers.map(code => ({ DOH: 'Doha', DEL: 'Delhi', DXB: 'Dubai' }[code] || code)).join(', ')}` : 'Non-stop'} • {selectedFlight.duration}
+                    {selectedFlight.layovers.length ? `via ${selectedFlight.layovers.map(code => (flightPricingData.pricing_notes.layover_codes[code] || code)).join(', ')}` : 'Non-stop'} • {selectedFlight.duration}
                   </p>
                   <div className="text-3xl font-bold text-blue-600">
                     ${selectedFlight.price}
@@ -571,9 +623,9 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
                   <select 
                     className="w-full p-4 pr-12 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:border-gray-400 transition-colors appearance-none cursor-pointer" 
                     value={selectedFlight.id} 
-                    onChange={e => { const f = dummyFlights.find(f => f.id === Number(e.target.value)); setSelectedFlight(f); }}
+                    onChange={e => { const f = availableFlights.find(f => f.id === Number(e.target.value)); setSelectedFlight(f); }}
                   >
-                    {dummyFlights.map(flight => (
+                    {availableFlights.map(flight => (
                       <option key={flight.id} value={flight.id} className="py-2">{flight.airline} - ${flight.price}</option>
                     ))}
                   </select>
@@ -910,15 +962,16 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
                           {isCityDropdownOpen && (
                             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                               {filteredDestinations.length > 0 ? (
-                                filteredDestinations.map(city => (
+                                filteredDestinations.map(dest => (
                                   <button
-                                    key={city}
-                                    onClick={() => handleReturnCityChange(city)}
+                                    key={`${dest.city}-${dest.country}`}
+                                    onClick={() => handleReturnCityChange(dest.city)}
                                     className={`w-full text-left px-4 py-3 hover:bg-purple-50 hover:text-purple-700 transition-colors border-b border-gray-100 last:border-b-0 ${
-                                      selectedReturnCity === city ? 'bg-purple-50 text-purple-700 font-medium' : 'text-gray-700'
+                                      selectedReturnCity === dest.city ? 'bg-purple-50 text-purple-700 font-medium' : 'text-gray-700'
                                     }`}
                                   >
-                                    {city}
+                                    <div className="font-medium">{dest.city}</div>
+                                    <div className="text-sm text-gray-500">{dest.country}</div>
                                   </button>
                                 ))
                               ) : (
@@ -946,7 +999,7 @@ export default function SecondPage({ selectedActivities = [], onBack }) {
                           <div className="space-y-3 mb-6">
                             <p className="text-gray-700 font-medium">Kathmandu → {selectedReturnCity}</p>
                             <p className="text-sm text-gray-600">
-                              {selectedReturnFlight.layovers.length ? `via ${selectedReturnFlight.layovers.map(code => ({ DOH: 'Doha', DEL: 'Delhi', DXB: 'Dubai', ORD: 'Chicago', BKK: 'Bangkok' }[code] || code)).join(', ')}` : 'Non-stop'} • {selectedReturnFlight.duration}
+                              {selectedReturnFlight.layovers.length ? `via ${selectedReturnFlight.layovers.map(code => (flightPricingData.pricing_notes.layover_codes[code] || code)).join(', ')}` : 'Non-stop'} • {selectedReturnFlight.duration}
                             </p>
                             <div className="text-3xl font-bold text-purple-600">
                               ${selectedReturnFlight.price}

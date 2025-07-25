@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import SecondPage from './SecondPage';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import countryCityData from './data/countries-cities.json';
+import flightPricingData from './data/flight-pricing.json';
 import Select from 'react-select';
 import syambhu0 from './assets/landing page/syambhu.jpg';
 import syambhu1 from './assets/landing page/syambhu1.jpg';
@@ -104,6 +104,23 @@ const fontStyle = `
   }
 `;
 
+// Helper functions to extract data from flight pricing JSON
+const getCountriesFromFlightData = () => {
+  return Object.keys(flightPricingData.routes).sort();
+};
+
+const getCitiesForCountry = (country) => {
+  const countryData = flightPricingData.routes[country];
+  if (!countryData || !countryData.major_cities) return [];
+  return Object.keys(countryData.major_cities).sort();
+};
+
+// Create countryCityData-like structure for compatibility
+const countryCityData = {};
+getCountriesFromFlightData().forEach(country => {
+  countryCityData[country] = getCitiesForCountry(country);
+});
+
 const LOCATIONS = [
   { label: 'Kathmandu', value: 'kathmandu' },
   { label: 'Pokhara', value: 'pokhara' },
@@ -189,7 +206,7 @@ const selectInputStyle = `
   }
 `;
 
-function MainPage({ selectedActivities, setSelectedActivities }) {
+function MainPage({ selectedActivities, setSelectedActivities, selectedOrigin, setSelectedOrigin }) {
   const [selectedLocation, setSelectedLocation] = useState('kathmandu');
   const [arriving, setArriving] = useState('kathmandu');
   const [country, setCountry] = useState('');
@@ -262,9 +279,20 @@ function MainPage({ selectedActivities, setSelectedActivities }) {
   const handleCountryChange = (val) => {
     setCountry(val);
     setCity('');
+    // Update the selected origin
+    setSelectedOrigin(prev => ({
+      ...prev,
+      country: val,
+      city: ''
+    }));
   };
   const handleCityChange = (val) => {
     setCity(val);
+    // Update the selected origin
+    setSelectedOrigin(prev => ({
+      ...prev,
+      city: val
+    }));
   };
 
   // Helper for recommendations order
@@ -690,6 +718,10 @@ function MainPage({ selectedActivities, setSelectedActivities }) {
 
 export default function App() {
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [selectedOrigin, setSelectedOrigin] = useState({
+    country: '',
+    city: ''
+  });
 
   return (
     <>
@@ -699,8 +731,8 @@ export default function App() {
       <style>{selectInputStyle}</style>
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />} />
-          <Route path="/second" element={<SecondPage selectedActivities={selectedActivities} onBack={() => window.history.back()} />} />
+          <Route path="/" element={<MainPage selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} selectedOrigin={selectedOrigin} setSelectedOrigin={setSelectedOrigin} />} />
+          <Route path="/second" element={<SecondPage selectedActivities={selectedActivities} selectedOrigin={selectedOrigin} onBack={() => window.history.back()} />} />
         </Routes>
       </Router>
     </>
