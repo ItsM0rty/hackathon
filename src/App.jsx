@@ -12,6 +12,7 @@ import headerImage from './assets/landing page/Header image.jpg';
 import bookingImg from './assets/landing page/booking.png';
 import logoImg from './assets/landing page/LOGO.png';
 import guestImg from './assets/landing page/guest.png';
+import aiRecommendationService from './services/aiRecommendations';
 // Dynamic loader for place data from Kathmandu and Pokhara folders
 import { useMemo } from 'react';
 
@@ -223,6 +224,12 @@ function MainPage({ selectedActivities, setSelectedActivities, selectedOrigin, s
   const [cardSlides, setCardSlides] = useState({}); // { [placeName]: idx }
   const [hoverStates, setHoverStates] = useState({}); // { [placeName]: 'left'|'right'|null }
   const places = useDynamicPlaces();
+  
+  // AI Recommendation state
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [userPreferences, setUserPreferences] = useState('');
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState(null);
   useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
@@ -266,6 +273,93 @@ function MainPage({ selectedActivities, setSelectedActivities, selectedOrigin, s
         return newActivities;
       }
     });
+  };
+
+  // AI Recommendation handler
+  const handleAIRecommendations = async () => {
+    if (!userPreferences.trim()) {
+      alert('Please enter your preferences first!');
+      return;
+    }
+
+    setIsLoadingAI(true);
+    
+    try {
+      // Get all available activities from both cities
+      const allActivities = [
+        ...places.kathmandu.map(place => ({ ...place, city: 'kathmandu' })),
+        ...places.pokhara.map(place => ({ ...place, city: 'pokhara' })),
+        ...RECOMMENDATIONS.kathmandu.map(rec => ({ 
+          name: rec.name, 
+          description: rec.desc, 
+          city: 'kathmandu',
+          price: rec.price,
+          rating: rec.rating 
+        })),
+        ...RECOMMENDATIONS.pokhara.map(rec => ({ 
+          name: rec.name, 
+          description: rec.desc, 
+          city: 'pokhara',
+          price: rec.price,
+          rating: rec.rating 
+        }))
+      ];
+
+      console.log('🤖 Getting AI recommendations for:', userPreferences);
+      console.log('📋 Available activities:', allActivities.length);
+
+      const recommendations = await aiRecommendationService.getRecommendations(
+        userPreferences, 
+        allActivities,
+        'deepseek' // Prefer DeepSeek for speed
+      );
+
+      setAiRecommendations(recommendations);
+      
+      // Auto-select recommended activities
+      if (recommendations.recommendations && recommendations.recommendations.length > 0) {
+        recommendations.recommendations.forEach(rec => {
+          // Find the matching activity
+          const matchingActivity = allActivities.find(activity => 
+            activity.name === rec.activityName
+          );
+          
+          if (matchingActivity) {
+            // Create standardized activity object
+            const standardizedActivity = {
+              name: matchingActivity.name,
+              description: matchingActivity.description || rec.reasoning,
+              price: matchingActivity.price,
+              rating: matchingActivity.rating,
+              location: matchingActivity.location,
+              city: rec.city,
+              aiRecommended: true,
+              matchScore: rec.matchScore,
+              originalData: matchingActivity
+            };
+            
+            // Add to selected activities if not already selected
+            setSelectedActivities(prev => {
+              const exists = prev.find(r => r.name === matchingActivity.name);
+              if (!exists) {
+                console.log(`✅ Auto-selecting: ${matchingActivity.name} (Score: ${rec.matchScore})`);
+                return [...prev, standardizedActivity];
+              }
+              return prev;
+            });
+          }
+        });
+        
+        setShowPlaceAdded(true);
+        setTimeout(() => setShowPlaceAdded(false), 3000);
+      }
+      
+    } catch (error) {
+      console.error('❌ AI Recommendation failed:', error);
+      alert('AI recommendations temporarily unavailable. Please try selecting activities manually.');
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   // Auto-rotate Swayambhu images
@@ -455,6 +549,76 @@ function MainPage({ selectedActivities, setSelectedActivities, selectedOrigin, s
         </div>
         {/* Add a gap below the header image */}
         <div className="h-8" />
+        
+        {/* Minimal Suggestion Section */}
+        <section className="w-full max-w-4xl mb-8">
+          <div className="rounded-2xl shadow-lg p-6 bg-white">
+            <h3 className="text-2xl font-bold mb-4 text-black">Suggest me</h3>
+            <div className="space-y-4">
+              <div>
+                <textarea
+                  value={userPreferences}
+                  onChange={(e) => setUserPreferences(e.target.value)}
+                  placeholder="What are you looking for?"
+                  className="w-full p-4 rounded-xl bg-white border border-gray-300 text-black placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  rows="2"
+                  style={{ fontSize: '1rem' }}
+                />
+              </div>
+              <div className="flex justify-between items-center">
+                <button
+                  onClick={handleAIRecommendations}
+                  disabled={isLoadingAI || !userPreferences.trim()}
+                  className="bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  style={{ fontSize: '1rem' }}
+                >
+                  {isLoadingAI ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>Suggest me</>
+                  )}
+                </button>
+                {aiRecommendations && (
+                  <div className="text-right">
+                    <div className="text-sm text-black">
+                      {aiRecommendations.recommendations?.length || 0} suggestions found
+                    </div>
+                    {aiRecommendations.summary && (
+                      <div className="text-xs text-gray-700 max-w-xs">
+                        {aiRecommendations.summary}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Minimal Recommendations Display */}
+              {aiRecommendations && aiRecommendations.recommendations && aiRecommendations.recommendations.length > 0 && (
+                <div className="mt-6 p-4 bg-white rounded-xl border border-gray-200">
+                  <div className="space-y-3">
+                    {aiRecommendations.recommendations.slice(0, 5).map((rec, index) => (
+                      <div key={index} className="rounded-lg p-3 border-l-4 border-black bg-white">
+                        <div className="flex justify-between items-start mb-2">
+                          <h5 className="font-semibold text-black">{rec.activityName}</h5>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs bg-black text-white px-2 py-1 rounded-full font-medium">
+                              {rec.matchScore}% match
+                            </span>
+                            <span className="text-xs text-gray-700 capitalize">{rec.city}</span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-800">{rec.reasoning}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Flight Overview */}
         {country && city && (
           <section className="w-full max-w-4xl flex flex-col items-center mb-8 mt-2">
