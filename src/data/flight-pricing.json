@@ -1,0 +1,2865 @@
+{
+  "_metadata": {
+    "version": "1.0",
+    "last_updated": "2025-01-24",
+    "description": "Flight pricing data for routes to/from Kathmandu (KTM) with supported airlines",
+    "currency": "USD",
+    "airlines_supported": [
+      "Qatar Airways",
+      "Turkish Airlines", 
+      "Emirates",
+      "Air India",
+      "Singapore Airlines",
+      "Nepal Airlines",
+      "IndiGo",
+      "FlyDubai",
+      "Malaysia Airlines",
+      "Thai Airways",
+      "China Southern",
+      "Air Arabia",
+      "Biman Bangladesh",
+      "Druk Air",
+      "Himalaya Airlines"
+    ]
+  },
+  "routes": {
+    "United States": {
+      "major_cities": {
+        "New York": {
+          "airport_code": "JFK",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 843,
+              "duration": "18h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK", 
+              "price": 910,
+              "duration": "20h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 875,
+              "duration": "19h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 920,
+              "duration": "19h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 985,
+              "duration": "21h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 950,
+              "duration": "20h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        },
+        "Los Angeles": {
+          "airport_code": "LAX",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1080,
+              "duration": "22h 50m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1120,
+              "duration": "23h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1095,
+              "duration": "24h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1080,
+              "duration": "22h 50m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1120,
+              "duration": "23h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1095,
+              "duration": "24h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        },
+        "Chicago": {
+          "airport_code": "ORD",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 895,
+              "duration": "19h 20m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 920,
+              "duration": "20h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 950,
+              "duration": "20h 10m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 975,
+              "duration": "21h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "United Kingdom": {
+      "major_cities": {
+        "London": {
+          "airport_code": "LHR",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 820,
+              "duration": "17h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 850,
+              "duration": "18h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 785,
+              "duration": "16h 50m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 820,
+              "duration": "17h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 850,
+              "duration": "18h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 785,
+              "duration": "16h 50m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "United Arab Emirates": {
+      "major_cities": {
+        "Dubai": {
+          "airport_code": "DXB",
+          "to_kathmandu": [
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 420,
+              "duration": "4h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "FlyDubai",
+              "airline_code": "FZ",
+              "price": 380,
+              "duration": "4h 45m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "Air Arabia",
+              "airline_code": "G9",
+              "price": 350,
+              "duration": "5h 00m",
+              "layovers": [],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 420,
+              "duration": "4h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "FlyDubai",
+              "airline_code": "FZ",
+              "price": 380,
+              "duration": "4h 45m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "Air Arabia",
+              "airline_code": "G9",
+              "price": 350,
+              "duration": "5h 00m",
+              "layovers": [],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Japan": {
+      "major_cities": {
+        "Tokyo": {
+          "airport_code": "NRT",
+          "to_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 650,
+              "duration": "11h 50m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 720,
+              "duration": "12h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 695,
+              "duration": "13h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 650,
+              "duration": "11h 50m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 720,
+              "duration": "12h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 695,
+              "duration": "13h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Australia": {
+      "major_cities": {
+        "Sydney": {
+          "airport_code": "SYD",
+          "to_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 850,
+              "duration": "14h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 795,
+              "duration": "15h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 850,
+              "duration": "14h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 795,
+              "duration": "15h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Canada": {
+      "major_cities": {
+        "Toronto": {
+          "airport_code": "YYZ",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 925,
+              "duration": "20h 15m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 950,
+              "duration": "21h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 995,
+              "duration": "22h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 975,
+              "duration": "21h 00m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1000,
+              "duration": "22h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1045,
+              "duration": "23h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Germany": {
+      "major_cities": {
+        "Frankfurt": {
+          "airport_code": "FRA",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 765,
+              "duration": "15h 20m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 805,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 825,
+              "duration": "17h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 765,
+              "duration": "15h 20m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 805,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 825,
+              "duration": "17h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Singapore": {
+      "major_cities": {
+        "Singapore": {
+          "airport_code": "SIN",
+          "to_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 480,
+              "duration": "6h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 420,
+              "duration": "7h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 380,
+              "duration": "8h 15m",
+              "layovers": ["DEL"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 480,
+              "duration": "6h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 420,
+              "duration": "7h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 380,
+              "duration": "8h 15m",
+              "layovers": ["DEL"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Thailand": {
+      "major_cities": {
+        "Bangkok": {
+          "airport_code": "BKK",
+          "to_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 320,
+              "duration": "3h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 280,
+              "duration": "3h 30m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 250,
+              "duration": "4h 15m",
+              "layovers": ["DEL"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 320,
+              "duration": "3h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 280,
+              "duration": "3h 30m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 250,
+              "duration": "4h 15m",
+              "layovers": ["DEL"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "India": {
+      "major_cities": {
+        "New Delhi": {
+          "airport_code": "DEL",
+          "to_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 180,
+              "duration": "1h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 150,
+              "duration": "1h 25m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 165,
+              "duration": "1h 35m",
+              "layovers": [],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 180,
+              "duration": "1h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 150,
+              "duration": "1h 25m",
+              "layovers": [],
+              "recommended": false
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 165,
+              "duration": "1h 35m",
+              "layovers": [],
+              "recommended": false
+            }
+          ]
+        },
+        "Mumbai": {
+          "airport_code": "BOM",
+          "to_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 250,
+              "duration": "2h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 220,
+              "duration": "2h 30m",
+              "layovers": [],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 250,
+              "duration": "2h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 220,
+              "duration": "2h 30m",
+              "layovers": [],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Bangladesh": {
+      "major_cities": {
+        "Dhaka": {
+          "airport_code": "DAC",
+          "to_kathmandu": [
+            {
+              "airline": "Biman Bangladesh",
+              "airline_code": "BG",
+              "price": 195,
+              "duration": "1h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 175,
+              "duration": "1h 40m",
+              "layovers": [],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Biman Bangladesh",
+              "airline_code": "BG",
+              "price": 195,
+              "duration": "1h 45m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Nepal Airlines",
+              "airline_code": "RA",
+              "price": 175,
+              "duration": "1h 40m",
+              "layovers": [],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Bhutan": {
+      "major_cities": {
+        "Thimphu": {
+          "airport_code": "PBH",
+          "to_kathmandu": [
+            {
+              "airline": "Druk Air",
+              "airline_code": "KB",
+              "price": 280,
+              "duration": "1h 15m",
+              "layovers": [],
+              "recommended": true
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Druk Air",
+              "airline_code": "KB",
+              "price": 280,
+              "duration": "1h 15m",
+              "layovers": [],
+              "recommended": true
+            }
+          ]
+        }
+      }
+    },
+    "China": {
+      "major_cities": {
+        "Beijing": {
+          "airport_code": "PEK",
+          "to_kathmandu": [
+            {
+              "airline": "China Southern",
+              "airline_code": "CZ",
+              "price": 580,
+              "duration": "7h 30m",
+              "layovers": ["CAN"],
+              "recommended": true
+            },
+            {
+              "airline": "Air China",
+              "airline_code": "CA",
+              "price": 620,
+              "duration": "8h 15m",
+              "layovers": ["CTU"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "China Southern",
+              "airline_code": "CZ",
+              "price": 580,
+              "duration": "7h 30m",
+              "layovers": ["CAN"],
+              "recommended": true
+            },
+            {
+              "airline": "Air China",
+              "airline_code": "CA",
+              "price": 620,
+              "duration": "8h 15m",
+              "layovers": ["CTU"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Malaysia": {
+      "major_cities": {
+        "Kuala Lumpur": {
+          "airport_code": "KUL",
+          "to_kathmandu": [
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 450,
+              "duration": "5h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Air Asia",
+              "airline_code": "AK",
+              "price": 380,
+              "duration": "6h 15m",
+              "layovers": ["BKK"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 450,
+              "duration": "5h 30m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Air Asia",
+              "airline_code": "AK",
+              "price": 380,
+              "duration": "6h 15m",
+              "layovers": ["BKK"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "France": {
+      "major_cities": {
+        "Paris": {
+          "airport_code": "CDG",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 795,
+              "duration": "16h 20m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 835,
+              "duration": "17h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 860,
+              "duration": "18h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 795,
+              "duration": "16h 20m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 835,
+              "duration": "17h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 860,
+              "duration": "18h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Italy": {
+      "major_cities": {
+        "Rome": {
+          "airport_code": "FCO",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 770,
+              "duration": "15h 50m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 810,
+              "duration": "17h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 835,
+              "duration": "18h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 770,
+              "duration": "15h 50m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 810,
+              "duration": "17h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 835,
+              "duration": "18h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Spain": {
+      "major_cities": {
+        "Madrid": {
+          "airport_code": "MAD",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 815,
+              "duration": "17h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "18h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 875,
+              "duration": "19h 20m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 815,
+              "duration": "17h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "18h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 875,
+              "duration": "19h 20m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Netherlands": {
+      "major_cities": {
+        "Amsterdam": {
+          "airport_code": "AMS",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 790,
+              "duration": "16h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 825,
+              "duration": "18h 10m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 845,
+              "duration": "18h 50m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 790,
+              "duration": "16h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 825,
+              "duration": "18h 10m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 845,
+              "duration": "18h 50m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Brazil": {
+      "major_cities": {
+        "São Paulo": {
+          "airport_code": "GRU",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1250,
+              "duration": "28h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1320,
+              "duration": "30h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1380,
+              "duration": "31h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1250,
+              "duration": "28h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1320,
+              "duration": "30h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1380,
+              "duration": "31h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Republic of Korea": {
+      "major_cities": {
+        "Seoul": {
+          "airport_code": "ICN",
+          "to_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 620,
+              "duration": "10h 30m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 680,
+              "duration": "11h 45m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 720,
+              "duration": "13h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 620,
+              "duration": "10h 30m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 680,
+              "duration": "11h 45m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 720,
+              "duration": "13h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Russia": {
+      "major_cities": {
+        "Moscow": {
+          "airport_code": "SVO",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 690,
+              "duration": "12h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 745,
+              "duration": "14h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 780,
+              "duration": "15h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 690,
+              "duration": "12h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 745,
+              "duration": "14h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 780,
+              "duration": "15h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Mexico": {
+      "major_cities": {
+        "Mexico City": {
+          "airport_code": "MEX",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1180,
+              "duration": "26h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1245,
+              "duration": "28h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1290,
+              "duration": "29h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1180,
+              "duration": "26h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1245,
+              "duration": "28h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1290,
+              "duration": "29h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Indonesia": {
+      "major_cities": {
+        "Jakarta": {
+          "airport_code": "CGK",
+          "to_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 520,
+              "duration": "7h 45m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 480,
+              "duration": "8h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 495,
+              "duration": "8h 15m",
+              "layovers": ["KUL"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 520,
+              "duration": "7h 45m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 480,
+              "duration": "8h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 495,
+              "duration": "8h 15m",
+              "layovers": ["KUL"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Philippines": {
+      "major_cities": {
+        "Manila": {
+          "airport_code": "MNL",
+          "to_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 580,
+              "duration": "8h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 540,
+              "duration": "9h 10m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 620,
+              "duration": "11h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 580,
+              "duration": "8h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 540,
+              "duration": "9h 10m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 620,
+              "duration": "11h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Vietnam": {
+      "major_cities": {
+        "Ho Chi Minh City": {
+          "airport_code": "SGN",
+          "to_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 380,
+              "duration": "5h 45m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 420,
+              "duration": "6h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 395,
+              "duration": "6h 15m",
+              "layovers": ["KUL"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 380,
+              "duration": "5h 45m",
+              "layovers": ["BKK"],
+              "recommended": true
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 420,
+              "duration": "6h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            },
+            {
+              "airline": "Malaysia Airlines",
+              "airline_code": "MH",
+              "price": 395,
+              "duration": "6h 15m",
+              "layovers": ["KUL"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Egypt": {
+      "major_cities": {
+        "Cairo": {
+          "airport_code": "CAI",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 520,
+              "duration": "8h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 545,
+              "duration": "9h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 495,
+              "duration": "8h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 520,
+              "duration": "8h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 545,
+              "duration": "9h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 495,
+              "duration": "8h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "South Africa": {
+      "major_cities": {
+        "Johannesburg": {
+          "airport_code": "JNB",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 980,
+              "duration": "17h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 895,
+              "duration": "18h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 980,
+              "duration": "17h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 895,
+              "duration": "18h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "New Zealand": {
+      "major_cities": {
+        "Auckland": {
+          "airport_code": "AKL",
+          "to_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 980,
+              "duration": "18h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 920,
+              "duration": "19h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1050,
+              "duration": "20h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 980,
+              "duration": "18h 20m",
+              "layovers": ["SIN"],
+              "recommended": true
+            },
+            {
+              "airline": "Thai Airways",
+              "airline_code": "TG",
+              "price": 920,
+              "duration": "19h 30m",
+              "layovers": ["BKK"],
+              "recommended": false
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1050,
+              "duration": "20h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Argentina": {
+      "major_cities": {
+        "Buenos Aires": {
+          "airport_code": "EZE",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1350,
+              "duration": "32h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1420,
+              "duration": "34h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1480,
+              "duration": "35h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1350,
+              "duration": "32h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1420,
+              "duration": "34h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1480,
+              "duration": "35h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Chile": {
+      "major_cities": {
+        "Santiago": {
+          "airport_code": "SCL",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1320,
+              "duration": "31h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1385,
+              "duration": "33h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1450,
+              "duration": "34h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 1320,
+              "duration": "31h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 1385,
+              "duration": "33h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1450,
+              "duration": "34h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Turkey": {
+      "major_cities": {
+        "Istanbul": {
+          "airport_code": "IST",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 520,
+              "duration": "7h 15m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 580,
+              "duration": "9h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 605,
+              "duration": "10h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 520,
+              "duration": "7h 15m",
+              "layovers": [],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 580,
+              "duration": "9h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 605,
+              "duration": "10h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Iran": {
+      "major_cities": {
+        "Tehran": {
+          "airport_code": "IKA",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 450,
+              "duration": "6h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 420,
+              "duration": "7h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 480,
+              "duration": "8h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 450,
+              "duration": "6h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 420,
+              "duration": "7h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 480,
+              "duration": "8h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Saudi Arabia": {
+      "major_cities": {
+        "Riyadh": {
+          "airport_code": "RUH",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 420,
+              "duration": "6h 15m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 445,
+              "duration": "7h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 395,
+              "duration": "8h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 420,
+              "duration": "6h 15m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 445,
+              "duration": "7h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 395,
+              "duration": "8h 45m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Israel": {
+      "major_cities": {
+        "Tel Aviv": {
+          "airport_code": "TLV",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 580,
+              "duration": "9h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 620,
+              "duration": "10h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 645,
+              "duration": "11h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 580,
+              "duration": "9h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 620,
+              "duration": "10h 15m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 645,
+              "duration": "11h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Norway": {
+      "major_cities": {
+        "Oslo": {
+          "airport_code": "OSL",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 820,
+              "duration": "17h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 865,
+              "duration": "18h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 890,
+              "duration": "19h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 820,
+              "duration": "17h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 865,
+              "duration": "18h 45m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 890,
+              "duration": "19h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Sweden": {
+      "major_cities": {
+        "Stockholm": {
+          "airport_code": "ARN",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 810,
+              "duration": "16h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "18h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 875,
+              "duration": "19h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 810,
+              "duration": "16h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "18h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 875,
+              "duration": "19h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Denmark": {
+      "major_cities": {
+        "Copenhagen": {
+          "airport_code": "CPH",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 805,
+              "duration": "16h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 845,
+              "duration": "18h 00m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 870,
+              "duration": "18h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 805,
+              "duration": "16h 30m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 845,
+              "duration": "18h 00m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 870,
+              "duration": "18h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Poland": {
+      "major_cities": {
+        "Warsaw": {
+          "airport_code": "WAW",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 750,
+              "duration": "14h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 795,
+              "duration": "16h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 820,
+              "duration": "17h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 750,
+              "duration": "14h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 795,
+              "duration": "16h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 820,
+              "duration": "17h 10m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Greece": {
+      "major_cities": {
+        "Athens": {
+          "airport_code": "ATH",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 720,
+              "duration": "13h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 765,
+              "duration": "15h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 790,
+              "duration": "16h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 720,
+              "duration": "13h 45m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 765,
+              "duration": "15h 20m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 790,
+              "duration": "16h 00m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Kenya": {
+      "major_cities": {
+        "Nairobi": {
+          "airport_code": "NBO",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 720,
+              "duration": "12h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 780,
+              "duration": "13h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 695,
+              "duration": "14h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 720,
+              "duration": "12h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 780,
+              "duration": "13h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 695,
+              "duration": "14h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Ethiopia": {
+      "major_cities": {
+        "Addis Ababa": {
+          "airport_code": "ADD",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 680,
+              "duration": "11h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 735,
+              "duration": "12h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 650,
+              "duration": "13h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 680,
+              "duration": "11h 45m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 735,
+              "duration": "12h 30m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 650,
+              "duration": "13h 15m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Nigeria": {
+      "major_cities": {
+        "Lagos": {
+          "airport_code": "LOS",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "15h 20m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 795,
+              "duration": "17h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 850,
+              "duration": "15h 20m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 920,
+              "duration": "16h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 795,
+              "duration": "17h 30m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Morocco": {
+      "major_cities": {
+        "Casablanca": {
+          "airport_code": "CMN",
+          "to_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 920,
+              "duration": "19h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 980,
+              "duration": "21h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1020,
+              "duration": "22h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 920,
+              "duration": "19h 15m",
+              "layovers": ["IST"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 980,
+              "duration": "21h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 1020,
+              "duration": "22h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Ghana": {
+      "major_cities": {
+        "Accra": {
+          "airport_code": "ACC",
+          "to_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 890,
+              "duration": "16h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 960,
+              "duration": "17h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 835,
+              "duration": "18h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 890,
+              "duration": "16h 30m",
+              "layovers": ["DOH"],
+              "recommended": true
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 960,
+              "duration": "17h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            },
+            {
+              "airline": "Turkish Airlines",
+              "airline_code": "TK",
+              "price": 835,
+              "duration": "18h 20m",
+              "layovers": ["IST"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Pakistan": {
+      "major_cities": {
+        "Karachi": {
+          "airport_code": "KHI",
+          "to_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 320,
+              "duration": "3h 45m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 280,
+              "duration": "4h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 305,
+              "duration": "5h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 320,
+              "duration": "3h 45m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 280,
+              "duration": "4h 30m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 305,
+              "duration": "5h 15m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        },
+        "Islamabad": {
+          "airport_code": "ISB",
+          "to_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 295,
+              "duration": "3h 20m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 260,
+              "duration": "4h 00m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 285,
+              "duration": "4h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 295,
+              "duration": "3h 20m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Qatar Airways",
+              "airline_code": "QR",
+              "price": 260,
+              "duration": "4h 00m",
+              "layovers": ["DOH"],
+              "recommended": false
+            },
+            {
+              "airline": "Emirates",
+              "airline_code": "EK",
+              "price": 285,
+              "duration": "4h 45m",
+              "layovers": ["DXB"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    },
+    "Sri Lanka": {
+      "major_cities": {
+        "Colombo": {
+          "airport_code": "CMB",
+          "to_kathmandu": [
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 340,
+              "duration": "4h 15m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 365,
+              "duration": "4h 45m",
+              "layovers": ["DEL"],
+              "recommended": false
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 420,
+              "duration": "6h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            }
+          ],
+          "from_kathmandu": [
+            {
+              "airline": "IndiGo",
+              "airline_code": "6E",
+              "price": 340,
+              "duration": "4h 15m",
+              "layovers": ["DEL"],
+              "recommended": true
+            },
+            {
+              "airline": "Air India",
+              "airline_code": "AI",
+              "price": 365,
+              "duration": "4h 45m",
+              "layovers": ["DEL"],
+              "recommended": false
+            },
+            {
+              "airline": "Singapore Airlines",
+              "airline_code": "SQ",
+              "price": 420,
+              "duration": "6h 30m",
+              "layovers": ["SIN"],
+              "recommended": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "pricing_notes": {
+    "base_prices": "Prices are baseline economy class fares",
+    "seasonal_variation": "Prices may vary ±15% based on season",
+    "booking_advance": "Best prices available 2-4 weeks in advance",
+    "peak_seasons": ["December-January", "March-May", "September-November"],
+    "layover_codes": {
+      "DOH": "Doha, Qatar",
+      "DXB": "Dubai, UAE", 
+      "IST": "Istanbul, Turkey",
+      "BKK": "Bangkok, Thailand",
+      "SIN": "Singapore",
+      "DEL": "New Delhi, India",
+      "CAN": "Guangzhou, China",
+      "CTU": "Chengdu, China"
+    }
+  }
+}

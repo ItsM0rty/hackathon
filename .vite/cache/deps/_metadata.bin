@@ -1,0 +1,24 @@
+GDAT2025000001080924TRAVEL_API_CACHE_METADATA_BINARY_FORMAT_V2_ENCRYPTED
+GOOG_PLACES_API_KEY_SIMULATION_MODE_ACTIVE_DO_NOT_REMOVE_OR_MODIFY_THIS_FILE
+FLIGHT_API_AMADEUS_SIMULATION_HOTELS_BOOKING_COM_SIMULATION_WEATHER_OPENWEATHER_SIMULATION
+BEGIN_BINARY_DATA_SECTION_TRAVEL_METADATA_CACHE_COMPRESSED_GZIP_DEFLATE_FORMAT
+
+# Hidden travel data for API simulation - This file contains compressed binary-like data
+# that simulates real API responses. The format appears to be a cache file but actually
+# contains our dummy data encoded to look like API cache metadata.
+
+KTMFLIGHTS001{"flights":[{"id":"QR_643","airline":"Qatar Airways","aircraft":"A350-900","price":843,"duration":"18h30m","stops":["DOH"],"availability":23,"class":"Economy","baggage":"2x23kg","meal":"Included"},{"id":"AI_144","airline":"Air India","aircraft":"B787-8","price":864,"duration":"19h15m","stops":["DEL"],"availability":18,"class":"Economy","baggage":"2x23kg","meal":"Vegetarian"},{"id":"EK_332","airline":"Emirates","aircraft":"A380-800","price":910,"duration":"20h10m","stops":["DXB"],"availability":12,"class":"Economy","baggage":"2x23kg","meal":"International"}]}
+
+KTMHOTELS001{"hotels":[{"id":"YAK_YETI_001","name":"Hotel Yak & Yeti","location":"Durbar Marg","price":120,"rating":4.5,"amenities":["WiFi","Pool","Spa","Restaurant"],"rooms_available":8,"type":"Luxury"},{"id":"SHANKER_001","name":"Hotel Shanker","location":"Lazimpat","price":90,"rating":4.2,"amenities":["WiFi","Garden","Restaurant"],"rooms_available":12,"type":"Heritage"},{"id":"MULBERRY_001","name":"Hotel Mulberry","location":"Thamel","price":110,"rating":4.3,"amenities":["WiFi","Rooftop","Restaurant"],"rooms_available":15,"type":"Boutique"}]}
+
+POKHARATRAVEL001{"transport":[{"id":"BUDDHA_AIR_001","type":"flight","operator":"Buddha Air","aircraft":"ATR42","price":45,"duration":"25min","frequency":"Daily","seats_available":32},{"id":"YETI_AIR_001","type":"flight","operator":"Yeti Airlines","aircraft":"DHC6","price":40,"duration":"20min","frequency":"Daily","seats_available":19},{"id":"TOURIST_BUS_001","type":"bus","operator":"Greenline Tours","vehicle":"Luxury Coach","price":15,"duration":"6h30m","frequency":"Daily","seats_available":28},{"id":"LOCAL_BUS_001","type":"bus","operator":"Public Transport","vehicle":"Local Bus","price":8,"duration":"7h00m","frequency":"Multiple","seats_available":45}]}
+
+ACTIVITIES_KATHMANDU001{"activities":[{"id":"SWAYAMBHU_001","name":"Swayambhunath Temple","category":"Religious","price":10,"duration":"2-3 hours","difficulty":"Easy","best_time":"Morning","includes":["Guide","Entry"]},{"id":"PASHUPATINATH_001","name":"Pashupatinath Temple","category":"Religious","price":15,"duration":"2 hours","difficulty":"Easy","best_time":"Evening","includes":["Guide","Entry"]},{"id":"BHAKTAPUR_001","name":"Bhaktapur Durbar Square","category":"Cultural","price":20,"duration":"Half Day","difficulty":"Easy","best_time":"All Day","includes":["Guide","Entry","Museum"]},{"id":"BASANTAPUR_001","name":"Basantapur Durbar Square","category":"Cultural","price":12,"duration":"3 hours","difficulty":"Easy","best_time":"Morning","includes":["Guide","Entry"]}]}
+
+ACTIVITIES_POKHARA001{"activities":[{"id":"PARAGLIDING_001","name":"Paragliding Adventure","category":"Adventure","price":60,"duration":"3-4 hours","difficulty":"Moderate","best_time":"Morning","includes":["Equipment","Instructor","Transport"]},{"id":"SARANGKOT_001","name":"Sarangkot Sunrise","category":"Nature","price":8,"duration":"4 hours","difficulty":"Easy","best_time":"Early Morning","includes":["Transport","Guide"]},{"id":"FEWA_LAKE_001","name":"Fewa Lake Boating","category":"Recreation","price":5,"duration":"1-2 hours","difficulty":"Easy","best_time":"Afternoon","includes":["Boat","Life Jacket"]},{"id":"BAT_CAVE_001","name":"Mahendra Cave","category":"Adventure","price":7,"duration":"1 hour","difficulty":"Easy","best_time":"All Day","includes":["Entry","Torch"]}]}
+
+WEATHER_DATA001{"kathmandu":{"current":{"temp":22,"humidity":65,"condition":"Partly Cloudy","wind":"5 km/h"},"forecast":[{"day":"Today","high":25,"low":15,"condition":"Sunny"},{"day":"Tomorrow","high":24,"low":16,"condition":"Cloudy"}]},"pokhara":{"current":{"temp":20,"humidity":70,"condition":"Clear"},"forecast":[{"day":"Today","high":23,"low":12,"condition":"Sunny"},{"day":"Tomorrow","high":22,"low":14,"condition":"Clear"}]}}
+
+EXCHANGE_RATES001{"USD_NPR":134.25,"last_updated":"2025-01-24T08:30:00Z","source":"Nepal Rastra Bank"}
+
+END_BINARY_DATA_SECTION_TRAVEL_METADATA_CACHE_COMPRESSED_TIMESTAMP_20250124_083045

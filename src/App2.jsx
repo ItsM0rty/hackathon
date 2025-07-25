@@ -177,13 +177,13 @@ const selectInputStyle = `
   }
 `;
 
-function MainPage() {
+function MainPage({ selectedActivities, setSelectedActivities }) {
   const [selectedLocation, setSelectedLocation] = useState('kathmandu');
   const [arriving, setArriving] = useState('kathmandu');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [headerSolid, setHeaderSolid] = useState(false);
-  const [selectedRecommendations, setSelectedRecommendations] = useState([]);
+  // Using selectedActivities and setSelectedActivities from props
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showPlaceAdded, setShowPlaceAdded] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
@@ -192,6 +192,7 @@ function MainPage() {
   const [bookingFloat, setBookingFloat] = useState(false);
   // Card slideshow state: one per card
   const [cardSlides, setCardSlides] = useState({}); // { [placeName]: idx }
+  const [hoverStates, setHoverStates] = useState({}); // { [placeName]: 'left'|'right'|null }
   const places = useDynamicPlaces();
   useEffect(() => {
     const onScroll = () => {
@@ -207,10 +208,10 @@ function MainPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   const toggleRecommendation = (rec) => {
-    setSelectedRecommendations((prev) => {
-      const exists = prev.find(r => r.name === rec.name && r.desc === rec.desc);
+    setSelectedActivities((prev) => {
+      const exists = prev.find(r => r.name === rec.name && r.description === rec.description);
       if (exists) {
-        return prev.filter(r => !(r.name === rec.name && r.desc === rec.desc));
+        return prev.filter(r => !(r.name === rec.name && r.description === rec.description));
       } else {
         setShowPlaceAdded(true);
         setTimeout(() => setShowPlaceAdded(false), 2000);
@@ -562,14 +563,14 @@ function MainPage() {
             <div className="bg-white rounded-2xl shadow-2xl p-6 w-full relative border border-gray-200" style={{ maxHeight: 400, overflowY: 'auto' }}>
               <button className="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-700" onClick={() => setShowBookingModal(false)}>&times;</button>
               <h2 className="text-xl font-bold mb-4 text-[#144D4A]">Your Selected Places</h2>
-              {selectedRecommendations.length === 0 ? (
+              {selectedActivities.length === 0 ? (
                 <p className="text-gray-500">No places selected yet.</p>
               ) : (
                 <ul className="space-y-2">
-                  {selectedRecommendations.map((rec, i) => (
+                  {selectedActivities.map((rec, i) => (
                     <li key={i} className="flex flex-col border-b pb-2">
                       <span className="font-semibold text-[#144D4A]">{rec.name}</span>
-                      <span className="text-sm text-gray-600">{rec.desc}</span>
+                      <span className="text-sm text-gray-600">{rec.description}</span>
                     </li>
                   ))}
                 </ul>
@@ -584,7 +585,7 @@ function MainPage() {
           </div>
         )}
         {/* Booking Button: fixed at top right at all times */}
-        {selectedRecommendations.length > 0 && (
+        {selectedActivities.length > 0 && (
         <div className="fixed right-6 top-24 z-50 flex flex-col items-end transition-all duration-300">
           <div className="relative">
             <button
@@ -643,6 +644,8 @@ function MainPage() {
 }
 
 export default function App() {
+  const [selectedActivities, setSelectedActivities] = useState([]);
+
   return (
     <>
       <style>{globalStyle}</style>
@@ -651,8 +654,8 @@ export default function App() {
       <style>{selectInputStyle}</style>
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/second" element={<SecondPage onBack={() => window.history.back()} />} />
+          <Route path="/" element={<MainPage selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />} />
+          <Route path="/second" element={<SecondPage selectedActivities={selectedActivities} onBack={() => window.history.back()} />} />
         </Routes>
       </Router>
     </>
