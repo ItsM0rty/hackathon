@@ -5,6 +5,8 @@ import AirlineLogo from './components/AirlineLogo';
 import travelApi from './services/travelApi';
 import countryCityData from './data/countries-cities.json';
 import flightPricingData from './data/flight-pricing.json';
+import logoImg from './assets/landing page/LOGO.png';
+import guestImg from './assets/landing page/guest.png';
 
 // Simple Bus Icon Component
 const BusIcon = ({ className }) => (
@@ -213,7 +215,17 @@ const getReturnFlightData = (cityName) => {
   }));
 };
 
-export default function SecondPage({ onBack }) {
+export default function SecondPage({ selectedActivities = [], onBack }) {
+  // Debug logging
+  React.useEffect(() => {
+    console.log('📍 SecondPage received selectedActivities:', selectedActivities);
+    selectedActivities.forEach(activity => {
+      console.log(`  - ${activity.name}`);
+      console.log(`    - Description: ${activity.description || 'no description'}`);
+      console.log(`    - Price: ${activity.price || 'no price'} (type: ${typeof activity.price})`);
+      console.log(`    - Location: ${activity.location || 'no location'}`);
+    });
+  }, [selectedActivities]);
   // --- Loading States ---
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [isLoadingHotels, setIsLoadingHotels] = useState(true);
@@ -223,6 +235,7 @@ export default function SecondPage({ onBack }) {
   const [selectedFlight, setSelectedFlight] = useState(dummyFlights.reduce((min, f) => f.price < min.price ? f : min, dummyFlights[0]));
   
   // --- State for Return Flight Section ---
+  const [wantsReturnFlight, setWantsReturnFlight] = useState(false);
   const [selectedReturnCity, setSelectedReturnCity] = useState(availableDestinations[0] || 'New York');
   const [availableReturnFlights, setAvailableReturnFlights] = useState(() => getReturnFlightData(availableDestinations[0] || 'New York'));
   const [selectedReturnFlight, setSelectedReturnFlight] = useState(() => {
@@ -232,16 +245,128 @@ export default function SecondPage({ onBack }) {
   const [citySearchTerm, setCitySearchTerm] = useState('');
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
+  // Simple city classification based on actual file names and common keywords
+  const isKathmanduActivity = (activityName) => {
+    const name = activityName.toLowerCase();
+    const kathmanduKeywords = [
+      'swayambhu', 'swayambhunath', 'pashupatinath', 'durbar', 'thamel', 
+      'boudhanath', 'bhaktapur', 'basantapur', 'kathmandu', 'kailashnath',
+      'kailashthan', 'mahadev statue', 'patan', 'garden of dreams', 'monkey temple'
+    ];
+    return kathmanduKeywords.some(keyword => name.includes(keyword));
+  };
+
+  const isPokharaActivity = (activityName) => {
+    const name = activityName.toLowerCase();
+    const pokharaKeywords = [
+      'phewa', 'fewa', 'sarangkot', 'paragliding', 'pokhara', 'davis', 'cave', 
+      'peace pagoda', 'mountain museum', 'begnas', 'begnas lake', 'gupteshwor',
+      'world peace pagoda'
+    ];
+    return pokharaKeywords.some(keyword => name.includes(keyword));
+  };
+
+  // Extract price as number from price string - handle App.jsx format
+  const extractPrice = (priceInput) => {
+    console.log(`🔢 Extracting price from:`, priceInput, `(type: ${typeof priceInput})`);
+    
+    if (typeof priceInput === 'number') return priceInput;
+    
+    if (typeof priceInput === 'string') {
+      // App.jsx generates prices like "$15", "$20", etc.
+      const cleanString = priceInput.replace(/[$₹€£¥]/g, '').trim();
+      if (cleanString.toLowerCase() === 'free') return 0;
+      
+      const match = cleanString.match(/(\d+\.?\d*)/);
+      const result = match ? parseFloat(match[1]) : 0;
+      console.log(`🔢 Extracted price: ${result}`);
+      return result;
+    }
+    
+    return 0;
+  };
+
+  // Categorize selected activities by city with proper price extraction
+  const selectedKathmanduActivities = selectedActivities
+    .filter(activity => {
+      const isKathmandu = isKathmanduActivity(activity.name);
+      console.log(`🏛️ ${activity.name} is Kathmandu activity: ${isKathmandu}`);
+      return isKathmandu;
+    })
+    .map(activity => {
+      // Try different possible price properties
+      const priceValue = activity.price || activity.originalPrice || activity.cost || 0;
+      const extractedPrice = extractPrice(priceValue);
+      
+      console.log(`💰 Activity: ${activity.name}`);
+      console.log(`💰 Raw price: ${priceValue} (type: ${typeof priceValue})`);
+      console.log(`💰 Extracted price: ${extractedPrice}`);
+      
+      return {
+        ...activity,
+        id: `ktm_${activity.name.replace(/\s+/g, '_').toLowerCase()}`,
+        price: extractedPrice,
+        originalPrice: priceValue,
+        displayPrice: priceValue // Keep original for display if needed
+      };
+    });
+  
+  const selectedPokharaActivities = selectedActivities
+    .filter(activity => {
+      const isPokhara = isPokharaActivity(activity.name);
+      console.log(`🏔️ ${activity.name} is Pokhara activity: ${isPokhara}`);
+      return isPokhara;
+    })
+    .map(activity => {
+      // Try different possible price properties
+      const priceValue = activity.price || activity.originalPrice || activity.cost || 0;
+      const extractedPrice = extractPrice(priceValue);
+      
+      console.log(`💰 Activity: ${activity.name}`);
+      console.log(`💰 Raw price: ${priceValue} (type: ${typeof priceValue})`);
+      console.log(`💰 Extracted price: ${extractedPrice}`);
+      
+      return {
+        ...activity,
+        id: `pkr_${activity.name.replace(/\s+/g, '_').toLowerCase()}`,
+        price: extractedPrice,
+        originalPrice: priceValue,
+        displayPrice: priceValue // Keep original for display if needed
+      };
+    });
+
+  // State to track which activities are currently enabled (by default all selected activities are enabled)
+  const [enabledActivityIds, setEnabledActivityIds] = useState(() => {
+    return [...selectedKathmanduActivities, ...selectedPokharaActivities].map(activity => activity.id);
+  });
+
+  console.log('🔍 Activity categorization:');
+  console.log('  Kathmandu activities:', selectedKathmanduActivities);
+  console.log('  Pokhara activities:', selectedPokharaActivities);
+  console.log('  Enabled activity IDs:', enabledActivityIds);
+  
+  // Check for uncategorized activities
+  const uncategorizedActivities = selectedActivities.filter(activity => 
+    !isKathmanduActivity(activity.name) && !isPokharaActivity(activity.name)
+  );
+  if (uncategorizedActivities.length > 0) {
+    console.log('⚠️ Uncategorized activities:', uncategorizedActivities.map(a => a.name));
+  }
+
+  // Update enabled activities when selectedActivities changes
+  useEffect(() => {
+    const newEnabledIds = [...selectedKathmanduActivities, ...selectedPokharaActivities].map(activity => activity.id);
+    setEnabledActivityIds(newEnabledIds);
+  }, [selectedActivities]);
+
   // --- State for Kathmandu Section ---
   const [hotels, setHotels] = useState(dummyHotels);
   const [selectedHotel, setSelectedHotel] = useState(dummyHotels.find(h => h.recommended) || dummyHotels[0]);
   const [kathmanduDays, setKathmanduDays] = useState(3);
-  const [selectedKathmanduActivityIds, setSelectedKathmanduActivityIds] = useState([1, 2, 3, 4]);
 
   // --- State for Pokhara Section ---
   const [selectedPokharaHotel, setSelectedPokharaHotel] = useState({ id: 1, name: 'Temple Tree Resort', price: 100, recommended: true });
   const [pokharaDays, setPokharaDays] = useState(2);
-  const [selectedPokharaActivityIds, setSelectedPokharaActivityIds] = useState([1, 2, 3, 4]);
 
   // --- Split Pokhara Travel into two directions ---
   const [pokharaTravelModeKtmToPkr, setPokharaTravelModeKtmToPkr] = useState('Flight');
@@ -303,11 +428,12 @@ export default function SecondPage({ onBack }) {
   }, []);
 
   // --- Handlers ---
-  const handleToggleKathmanduActivity = (id) => {
-    setSelectedKathmanduActivityIds(ids => ids.includes(id) ? ids.filter(aid => aid !== id) : [...ids, id]);
-  };
-  const handleTogglePokharaActivity = (id) => {
-    setSelectedPokharaActivityIds(ids => ids.includes(id) ? ids.filter(aid => aid !== id) : [...ids, id]);
+  const handleToggleActivity = (activityId) => {
+    setEnabledActivityIds(ids => 
+      ids.includes(activityId) 
+        ? ids.filter(id => id !== activityId)
+        : [...ids, activityId]
+    );
   };
   const handlePokharaTravelKtmToPkrChange = (id) => {
     setSelectedPokharaTravelKtmToPkr(dummyPokharaTravel.find(t => t.id === id));
@@ -335,49 +461,82 @@ export default function SecondPage({ onBack }) {
     city.toLowerCase().includes(citySearchTerm.toLowerCase())
   );
 
+  // Determine if Pokhara section should be shown (only if Pokhara activities were originally selected)
+  const showPokharaSection = selectedPokharaActivities.length > 0;
+
+  // Get currently enabled activities for receipt
+  const enabledKathmanduActivities = selectedKathmanduActivities.filter(activity => enabledActivityIds.includes(activity.id));
+  const enabledPokharaActivities = selectedPokharaActivities.filter(activity => enabledActivityIds.includes(activity.id));
+
   // --- Receipt Items ---
   const receiptItems = [
     { type: 'Flight', desc: `NYC → KTM (${selectedFlight.airline})`, price: selectedFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
     { type: 'Hotel', desc: `Kathmandu: ${selectedHotel.name} (${kathmanduDays} nights)`, price: selectedHotel.price * kathmanduDays, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
-    ...dummyKathmanduActivities.filter(a => selectedKathmanduActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <TicketIcon className="w-5 h-5 text-pink-600" /> })),
-    { type: 'Travel', desc: `KTM → PKR (${selectedPokharaTravelKtmToPkr.name})`, price: selectedPokharaTravelKtmToPkr.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
-    { type: 'Hotel', desc: `Pokhara: ${selectedPokharaHotel.name} (${pokharaDays} nights)`, price: selectedPokharaHotel.price * pokharaDays, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
-    ...dummyPokharaActivities.filter(a => selectedPokharaActivityIds.includes(a.id)).map(a => ({ type: 'Activity', desc: a.name, price: a.price, icon: <TicketIcon className="w-5 h-5 text-cyan-600" /> })),
-    { type: 'Travel', desc: `PKR → KTM (${selectedPokharaTravelPkrToKtm.name})`, price: selectedPokharaTravelPkrToKtm.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
-    ...(selectedReturnFlight ? [{ type: 'Return Flight', desc: `KTM → ${selectedReturnCity} (${selectedReturnFlight.airline})`, price: selectedReturnFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-purple-600" /> }] : [])
+    ...enabledKathmanduActivities.map(activity => ({ 
+      type: 'Activity', 
+      desc: activity.name, 
+      price: activity.price, 
+      icon: <TicketIcon className="w-5 h-5 text-pink-600" /> 
+    })),
+    ...(showPokharaSection ? [
+      { type: 'Travel', desc: `KTM → PKR (${selectedPokharaTravelKtmToPkr.name})`, price: selectedPokharaTravelKtmToPkr.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> },
+      { type: 'Hotel', desc: `Pokhara: ${selectedPokharaHotel.name} (${pokharaDays} nights)`, price: selectedPokharaHotel.price * pokharaDays, icon: <BuildingOffice2Icon className="w-5 h-5 text-green-600" /> },
+      ...enabledPokharaActivities.map(activity => ({ 
+        type: 'Activity', 
+        desc: activity.name, 
+        price: activity.price, 
+        icon: <TicketIcon className="w-5 h-5 text-cyan-600" /> 
+      })),
+      { type: 'Travel', desc: `PKR → KTM (${selectedPokharaTravelPkrToKtm.name})`, price: selectedPokharaTravelPkrToKtm.price, icon: <ArrowRightIcon className="w-5 h-5 text-blue-600" /> }
+    ] : []),
+    ...(wantsReturnFlight && selectedReturnFlight ? [{ type: 'Return Flight', desc: `KTM → ${selectedReturnCity} (${selectedReturnFlight.airline})`, price: selectedReturnFlight.price, icon: <ArrowRightIcon className="w-5 h-5 text-purple-600" /> }] : [])
   ];
   const totalPrice = receiptItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <>
       <WebFonts />
-      <div className="min-h-screen bg-gray-50 font-sans">
-        {/* Navbar */}
-        <nav className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">Y</span>
-                </div>
-                <span className="text-xl font-display font-bold text-gray-900">Yaan</span>
-              </div>
-              <div className="hidden md:flex items-center space-x-8">
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Destinations</a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Packages</a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">About</a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Contact</a>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button className="text-gray-600 hover:text-gray-900 font-medium">Sign In</button>
-                <button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
-                  Sign Up
-                </button>
-              </div>
+      <style>{`
+  html, body, * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
+    display: none !important;
+  }
+`}</style>
+      <style>{`
+  html, body, * {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-display: swap;
+  }
+`}</style>
+      {/* Sticky/Overlay Header (copied from MainPage in App.jsx) */}
+      <header
+        className="fixed top-0 left-0 w-full z-30 transition-all duration-300 bg-white/95 shadow-lg border-b border-gray-200 backdrop-blur-md"
+        style={{ minHeight: '72px' }}
+      >
+        <div className="w-full flex justify-between items-center px-16 py-3">
+          <div className="flex items-center gap-2">
+            <button onClick={() => window.location.href = '/'} className="focus:outline-none">
+              <img src={logoImg} alt="Yaan Logo" className="h-10 w-auto mt-2" />
+            </button>
+          </div>
+          <nav className="flex gap-8 font-medium text-gray-800">
+            <a href="#" className="hover:text-orange-500">Home</a>
+            <a href="#" className="hover:text-orange-500">Discover</a>
+            <a href="#" className="hover:text-orange-500">Special Deals</a>
+            <a href="#" className="hover:text-orange-500">Contact</a>
+          </nav>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <img src={guestImg} alt="Guest" className="h-10 w-10 object-contain" />
+              <span className="font-medium text-gray-800 text-lg">Guest</span>
             </div>
           </div>
-        </nav>
-
+        </div>
+      </header>
+      <div className="min-h-screen bg-gray-50 font-sans pt-24">
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
           {/* Travel Section */}
           <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -387,7 +546,7 @@ export default function SecondPage({ onBack }) {
               </div>
               <h2 className="text-3xl font-display font-bold text-gray-900">Travel</h2>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className={`grid grid-cols-1 ${showPokharaSection ? 'lg:grid-cols-3' : 'lg:grid-cols-1 max-w-md mx-auto'} gap-8`}>
               {/* Flight to Kathmandu */}
               <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
                 <h3 className="text-xl font-semibold text-gray-900 mb-6">NYC → Kathmandu</h3>
@@ -414,30 +573,34 @@ export default function SecondPage({ onBack }) {
                   <ChevronDownIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>
-              {/* Kathmandu to Pokhara */}
-              <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">KTM → Pokhara</h3>
-                <TravelModeSelector
-                  mode={pokharaTravelModeKtmToPkr}
-                  onChange={setPokharaTravelModeKtmToPkr}
-                  selectedTravel={selectedPokharaTravelKtmToPkr}
-                  options={travelOptionsKtmToPkr}
-                  onTravelChange={handlePokharaTravelKtmToPkrChange}
-                  title="Travel Mode"
-                />
-              </div>
-              {/* Pokhara to Kathmandu */}
-              <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Pokhara → KTM</h3>
-                <TravelModeSelector
-                  mode={pokharaTravelModePkrToKtm}
-                  onChange={setPokharaTravelModePkrToKtm}
-                  selectedTravel={selectedPokharaTravelPkrToKtm}
-                  options={travelOptionsPkrToKtm}
-                  onTravelChange={handlePokharaTravelPkrToKtmChange}
-                  title="Travel Mode"
-                />
-              </div>
+              {/* Kathmandu to Pokhara - Only show if Pokhara activities selected */}
+              {showPokharaSection && (
+                <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-6">KTM → Pokhara</h3>
+                  <TravelModeSelector
+                    mode={pokharaTravelModeKtmToPkr}
+                    onChange={setPokharaTravelModeKtmToPkr}
+                    selectedTravel={selectedPokharaTravelKtmToPkr}
+                    options={travelOptionsKtmToPkr}
+                    onTravelChange={handlePokharaTravelKtmToPkrChange}
+                    title="Travel Mode"
+                  />
+                </div>
+              )}
+              {/* Pokhara to Kathmandu - Only show if Pokhara activities selected */}
+              {showPokharaSection && (
+                <div className="bg-gray-200/60 rounded-xl p-6 border border-gray-300/50">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-6">Pokhara → KTM</h3>
+                  <TravelModeSelector
+                    mode={pokharaTravelModePkrToKtm}
+                    onChange={setPokharaTravelModePkrToKtm}
+                    selectedTravel={selectedPokharaTravelPkrToKtm}
+                    options={travelOptionsPkrToKtm}
+                    onTravelChange={handlePokharaTravelPkrToKtmChange}
+                    title="Travel Mode"
+                  />
+                </div>
+              )}
             </div>
           </section>
 
@@ -509,39 +672,52 @@ export default function SecondPage({ onBack }) {
               {/* Kathmandu Activities */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-semibold text-gray-900">Activities</h3>
-                <div className="space-y-3">
-                  {dummyKathmanduActivities.map(act => {
-                    const selected = selectedKathmanduActivityIds.includes(act.id);
-                    return (
-                      <button 
-                        key={act.id} 
-                        onClick={() => handleToggleKathmanduActivity(act.id)} 
-                        className={`w-full flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
-                          selected 
-                            ? 'border-pink-200 bg-pink-50' 
-                            : 'border-gray-200 bg-gray-200/30 hover:border-gray-300 hover:bg-gray-200/50'
-                        }`}
-                      >
-                        <span className="flex items-center gap-3">
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selected ? 'border-pink-500 bg-pink-500' : 'border-gray-300'
-                          }`}>
-                            {selected && <CheckIcon className="w-3 h-3 text-white" />}
-                          </div>
-                          <span className="font-medium text-gray-800">{act.name}</span>
-                        </span>
-                        <span className={`font-bold text-lg ${selected ? 'text-pink-600' : 'text-gray-600'}`}>
-                          ${act.price}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                {selectedKathmanduActivities.length > 0 ? (
+                  <div className="space-y-3">
+                    {selectedKathmanduActivities.map(activity => {
+                      const isEnabled = enabledActivityIds.includes(activity.id);
+                      return (
+                        <button 
+                          key={activity.id} 
+                          onClick={() => handleToggleActivity(activity.id)} 
+                          className={`w-full flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
+                            isEnabled 
+                              ? 'border-pink-200 bg-pink-50' 
+                              : 'border-gray-200 bg-gray-200/30 hover:border-gray-300 hover:bg-gray-200/50'
+                          }`}
+                        >
+                          <span className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                              isEnabled ? 'border-pink-500 bg-pink-500' : 'border-gray-300'
+                            }`}>
+                              {isEnabled && <CheckIcon className="w-3 h-3 text-white" />}
+                            </div>
+                            <div className="text-left">
+                              <span className="font-medium text-gray-800 block">{activity.name}</span>
+                              {activity.description && (
+                                <span className="text-sm text-gray-600">{activity.description}</span>
+                              )}
+                            </div>
+                          </span>
+                          <span className={`font-bold text-lg ${isEnabled ? 'text-pink-600' : 'text-gray-600'}`}>
+                            {activity.displayPrice || `$${activity.price}`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No Kathmandu activities selected</p>
+                    <p className="text-sm">Go back to the main page to select activities</p>
+                  </div>
+                )}
               </div>
             </div>
           </section>
 
-          {/* Pokhara Section */}
+          {/* Pokhara Section - Only show if Pokhara activities were selected */}
+          {showPokharaSection && (
           <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center">
@@ -606,32 +782,37 @@ export default function SecondPage({ onBack }) {
                   </div>
                 </div>
               </div>
-              {/* Pokhara Activities (same as Kathmandu Activities) */}
+              {/* Pokhara Activities */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-semibold text-gray-900">Activities</h3>
                 <div className="space-y-3">
-                  {dummyPokharaActivities.map(act => {
-                    const selected = selectedPokharaActivityIds.includes(act.id);
+                  {selectedPokharaActivities.map(activity => {
+                    const isEnabled = enabledActivityIds.includes(activity.id);
                     return (
                       <button 
-                        key={act.id} 
-                        onClick={() => handleTogglePokharaActivity(act.id)} 
+                        key={activity.id} 
+                        onClick={() => handleToggleActivity(activity.id)} 
                         className={`w-full flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
-                          selected 
+                          isEnabled 
                             ? 'border-cyan-200 bg-cyan-50' 
                             : 'border-gray-200 bg-gray-200/30 hover:border-gray-300 hover:bg-gray-200/50'
                         }`}
                       >
                         <span className="flex items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selected ? 'border-cyan-500 bg-cyan-500' : 'border-gray-300'
+                            isEnabled ? 'border-cyan-500 bg-cyan-500' : 'border-gray-300'
                           }`}>
-                            {selected && <CheckIcon className="w-3 h-3 text-white" />}
+                            {isEnabled && <CheckIcon className="w-3 h-3 text-white" />}
                           </div>
-                          <span className="font-medium text-gray-800">{act.name}</span>
+                          <div className="text-left">
+                            <span className="font-medium text-gray-800 block">{activity.name}</span>
+                            {activity.description && (
+                              <span className="text-sm text-gray-600">{activity.description}</span>
+                            )}
+                          </div>
                         </span>
-                        <span className={`font-bold text-lg ${selected ? 'text-cyan-600' : 'text-gray-600'}`}>
-                          ${act.price}
+                        <span className={`font-bold text-lg ${isEnabled ? 'text-cyan-600' : 'text-gray-600'}`}>
+                          {activity.displayPrice || `$${activity.price}`}
                         </span>
                       </button>
                     );
@@ -640,6 +821,7 @@ export default function SecondPage({ onBack }) {
               </div>
             </div>
           </section>
+          )}
 
           {/* Return Flight Selection & Trip Summary */}
           <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -660,89 +842,131 @@ export default function SecondPage({ onBack }) {
                 
                 <div className="bg-gray-200/40 rounded-xl p-6 border border-gray-300/40">
                   
-                  {/* City Selector */}
+                  {/* Return Flight Toggle */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Select Destination City</label>
-                    <div className="relative">
-                      {/* Search Input */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder={selectedReturnCity || "Search for a city..."}
-                          value={citySearchTerm}
-                          onChange={(e) => setCitySearchTerm(e.target.value)}
-                          onFocus={() => setIsCityDropdownOpen(true)}
-                          className="w-full p-4 pr-12 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:border-gray-400 transition-colors cursor-pointer"
-                        />
-                        <button
-                          onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2"
-                        >
-                          <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
-                        </button>
-                      </div>
-                      
-                      {/* Dropdown Options */}
-                      {isCityDropdownOpen && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                          {filteredDestinations.length > 0 ? (
-                            filteredDestinations.map(city => (
-                              <button
-                                key={city}
-                                onClick={() => handleReturnCityChange(city)}
-                                className={`w-full text-left px-4 py-3 hover:bg-purple-50 hover:text-purple-700 transition-colors border-b border-gray-100 last:border-b-0 ${
-                                  selectedReturnCity === city ? 'bg-purple-50 text-purple-700 font-medium' : 'text-gray-700'
-                                }`}
-                              >
-                                {city}
-                              </button>
-                            ))
-                          ) : (
-                            <div className="px-4 py-3 text-gray-500 text-center">
-                              No cities found matching "{citySearchTerm}"
+                    <label className="flex items-center gap-4 cursor-pointer group">
+                      {/* Custom Toggle Switch */}
+                      <div className={`relative w-12 h-6 rounded-full transition-all duration-300 ${
+                        wantsReturnFlight ? 'bg-purple-600' : 'bg-gray-300'
+                      }`}>
+                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                          wantsReturnFlight ? 'translate-x-6' : 'translate-x-0'
+                        }`}>
+                          {wantsReturnFlight && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <PaperAirplaneIcon className="w-3 h-3 text-purple-600" />
                             </div>
                           )}
                         </div>
-                      )}
-                      
-                      {/* Click outside to close */}
-                      {isCityDropdownOpen && (
-                        <div
-                          className="fixed inset-0 z-5"
-                          onClick={() => setIsCityDropdownOpen(false)}
+                        <input
+                          type="checkbox"
+                          checked={wantsReturnFlight}
+                          onChange={(e) => setWantsReturnFlight(e.target.checked)}
+                          className="sr-only"
                         />
-                      )}
-                    </div>
+                      </div>
+                      <div>
+                        <span className="text-lg font-medium text-gray-700 group-hover:text-purple-600 transition-colors">
+                          Add return flight
+                        </span>
+                        <p className="text-sm text-gray-500 mt-0.5">Book your return journey back home</p>
+                      </div>
+                    </label>
                   </div>
 
-                  {/* Flight Details */}
-                  {selectedReturnFlight && (
+                  {/* Content based on return flight selection */}
+                  {wantsReturnFlight ? (
                     <>
-                      <AirlineLogo airlineName={selectedReturnFlight.airline} airlineCode={selectedReturnFlight.airline_code} className="mb-6 h-20 w-full object-contain" />
-                      <div className="space-y-3 mb-6">
-                        <p className="text-gray-700 font-medium">Kathmandu → {selectedReturnCity}</p>
-                        <p className="text-sm text-gray-600">
-                          {selectedReturnFlight.layovers.length ? `via ${selectedReturnFlight.layovers.map(code => ({ DOH: 'Doha', DEL: 'Delhi', DXB: 'Dubai', ORD: 'Chicago', BKK: 'Bangkok' }[code] || code)).join(', ')}` : 'Non-stop'} • {selectedReturnFlight.duration}
-                        </p>
-                        <div className="text-3xl font-bold text-purple-600">
-                          ${selectedReturnFlight.price}
+                      {/* City Selector */}
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-3">Select Destination City</label>
+                        <div className="relative">
+                          {/* Search Input */}
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder={selectedReturnCity || "Search for a city..."}
+                              value={citySearchTerm}
+                              onChange={(e) => setCitySearchTerm(e.target.value)}
+                              onFocus={() => setIsCityDropdownOpen(true)}
+                              className="w-full p-4 pr-12 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:border-gray-400 transition-colors cursor-pointer"
+                            />
+                            <button
+                              onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+                              className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                            >
+                              <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                          </div>
+                          
+                          {/* Dropdown Options */}
+                          {isCityDropdownOpen && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                              {filteredDestinations.length > 0 ? (
+                                filteredDestinations.map(city => (
+                                  <button
+                                    key={city}
+                                    onClick={() => handleReturnCityChange(city)}
+                                    className={`w-full text-left px-4 py-3 hover:bg-purple-50 hover:text-purple-700 transition-colors border-b border-gray-100 last:border-b-0 ${
+                                      selectedReturnCity === city ? 'bg-purple-50 text-purple-700 font-medium' : 'text-gray-700'
+                                    }`}
+                                  >
+                                    {city}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="px-4 py-3 text-gray-500 text-center">
+                                  No cities found matching "{citySearchTerm}"
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Click outside to close */}
+                          {isCityDropdownOpen && (
+                            <div
+                              className="fixed inset-0 z-5"
+                              onClick={() => setIsCityDropdownOpen(false)}
+                            />
+                          )}
                         </div>
                       </div>
-                      
-                      {/* Flight Options */}
-                      <div className="relative">
-                        <select 
-                          className="w-full p-4 pr-12 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:border-gray-400 transition-colors appearance-none cursor-pointer" 
-                          value={selectedReturnFlight.id} 
-                          onChange={e => handleReturnFlightChange(Number(e.target.value))}
-                        >
-                          {availableReturnFlights.map(flight => (
-                            <option key={flight.id} value={flight.id} className="py-2">{flight.airline} - ${flight.price}</option>
-                          ))}
-                        </select>
-                        <ChevronDownIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                      </div>
+
+                      {/* Flight Details */}
+                      {selectedReturnFlight && (
+                        <>
+                          <AirlineLogo airlineName={selectedReturnFlight.airline} airlineCode={selectedReturnFlight.airline_code} className="mb-6 h-20 w-full object-contain" />
+                          <div className="space-y-3 mb-6">
+                            <p className="text-gray-700 font-medium">Kathmandu → {selectedReturnCity}</p>
+                            <p className="text-sm text-gray-600">
+                              {selectedReturnFlight.layovers.length ? `via ${selectedReturnFlight.layovers.map(code => ({ DOH: 'Doha', DEL: 'Delhi', DXB: 'Dubai', ORD: 'Chicago', BKK: 'Bangkok' }[code] || code)).join(', ')}` : 'Non-stop'} • {selectedReturnFlight.duration}
+                            </p>
+                            <div className="text-3xl font-bold text-purple-600">
+                              ${selectedReturnFlight.price}
+                            </div>
+                          </div>
+                          
+                          {/* Flight Options */}
+                          <div className="relative">
+                            <select 
+                              className="w-full p-4 pr-12 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:border-gray-400 transition-colors appearance-none cursor-pointer" 
+                              value={selectedReturnFlight.id} 
+                              onChange={e => handleReturnFlightChange(Number(e.target.value))}
+                            >
+                              {availableReturnFlights.map(flight => (
+                                <option key={flight.id} value={flight.id} className="py-2">{flight.airline} - ${flight.price}</option>
+                              ))}
+                            </select>
+                            <ChevronDownIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                          </div>
+                        </>
+                      )}
                     </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No return flight selected</p>
+                      <p className="text-sm">Check the box above to add a return flight</p>
+                    </div>
                   )}
                 </div>
               </div>

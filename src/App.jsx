@@ -177,13 +177,13 @@ const selectInputStyle = `
   }
 `;
 
-function MainPage() {
+function MainPage({ selectedActivities, setSelectedActivities }) {
   const [selectedLocation, setSelectedLocation] = useState('kathmandu');
   const [arriving, setArriving] = useState('kathmandu');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [headerSolid, setHeaderSolid] = useState(false);
-  const [selectedRecommendations, setSelectedRecommendations] = useState([]);
+  // Using selectedActivities and setSelectedActivities from props
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showPlaceAdded, setShowPlaceAdded] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
@@ -192,6 +192,7 @@ function MainPage() {
   const [bookingFloat, setBookingFloat] = useState(false);
   // Card slideshow state: one per card
   const [cardSlides, setCardSlides] = useState({}); // { [placeName]: idx }
+  const [hoverStates, setHoverStates] = useState({}); // { [placeName]: 'left'|'right'|null }
   const places = useDynamicPlaces();
   useEffect(() => {
     const onScroll = () => {
@@ -207,10 +208,10 @@ function MainPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   const toggleRecommendation = (rec) => {
-    setSelectedRecommendations((prev) => {
-      const exists = prev.find(r => r.name === rec.name && r.desc === rec.desc);
+    setSelectedActivities((prev) => {
+      const exists = prev.find(r => r.name === rec.name && r.description === rec.description);
       if (exists) {
-        return prev.filter(r => !(r.name === rec.name && r.desc === rec.desc));
+        return prev.filter(r => !(r.name === rec.name && r.description === rec.description));
       } else {
         setShowPlaceAdded(true);
         setTimeout(() => setShowPlaceAdded(false), 2000);
@@ -437,23 +438,28 @@ function MainPage() {
               <h3 className="text-2xl font-bold text-[#F26B3A] mb-6">Recommended in {LOCATIONS.find(l => l.value === locKey).label}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {places[locKey].map((place, idx) => {
-                  const selected = selectedRecommendations.find(r => r.name === place.name && r.description === place.description);
+                  // Create complete place object first for comparison
+                  const completePlace = {
+                    ...place,
+                    price: place.price || ('$' + (10 + (idx % 5) * 5)),
+                    rating: place.rating || (4.5 + (idx % 5) * 0.1)
+                  };
+                  
+                  const selected = selectedActivities.find(r => r.name === place.name && r.description === place.description);
                   const slideIdx = cardSlides[place.name] || 0;
                   // Use only the sorted activityImages (act 0, act 1, act 2, act 3) for the slideshow
                   let images = place.activityImages && place.activityImages.length === 4
                     ? place.activityImages
                     : [place.mainImage, ...place.activityImages].filter(Boolean).slice(0, 4);
-                  // Track which side is hovered for this card
-                  const [hoverSide, setHoverSide] = useState(null); // 'left', 'right', or null
-                  // Add price and rating (use defaults if not present)
-                  const price = place.price || ('$' + (10 + (idx % 5) * 5));
-                  const rating = place.rating || (4.5 + (idx % 5) * 0.1);
+                  // Get hover state for this card
+                  const hoverSide = hoverStates[place.name] || null;
+                  
                   return (
                     <div
                       key={place.name}
                       className={`themed-card rounded-2xl shadow overflow-hidden flex flex-col items-start cursor-pointer transition-all duration-200 border-2 relative ${selected ? 'border-orange-400 bg-[#F26B3A] text-white' : ''}`}
                       style={{ boxShadow: '0 2px 16px 0 rgba(20,77,74,0.10)' }}
-                      onClick={() => toggleRecommendation(place)}
+                      onClick={() => toggleRecommendation(completePlace)}
                     >
                       {/* Checkmark for selected */}
                       {selected && (
@@ -467,11 +473,11 @@ function MainPage() {
                         onMouseMove={e => {
                           const bounds = e.currentTarget.getBoundingClientRect();
                           const x = e.clientX - bounds.left;
-                          if (x < bounds.width / 3) setHoverSide('left');
-                          else if (x > (2 * bounds.width) / 3) setHoverSide('right');
-                          else setHoverSide(null);
+                          if (x < bounds.width / 3) setHoverStates(prev => ({ ...prev, [place.name]: 'left' }));
+                          else if (x > (2 * bounds.width) / 3) setHoverStates(prev => ({ ...prev, [place.name]: 'right' }));
+                          else setHoverStates(prev => ({ ...prev, [place.name]: null }));
                         }}
-                        onMouseLeave={() => setHoverSide(null)}
+                        onMouseLeave={() => setHoverStates(prev => ({ ...prev, [place.name]: null }))}
                       >
                         {images.length > 0 ? (
                           <img
@@ -517,11 +523,11 @@ function MainPage() {
                       <div className="p-6 w-full flex flex-col items-start">
                         <div className="flex items-center justify-between w-full mb-1">
                           <h4 className="font-bold text-lg">{place.name}</h4>
-                          <span className="text-green-600 font-semibold">{price}</span>
+                          <span className="text-green-600 font-semibold">{completePlace.price}</span>
                         </div>
                         <p className="mb-2 text-gray-900">{shortDescription(place.description)}</p>
                         <div className="flex items-center gap-1 mb-2">
-                          <span className="text-orange-500 font-bold">{rating.toFixed(1)}</span>
+                          <span className="text-orange-500 font-bold">{completePlace.rating.toFixed(1)}</span>
                           <span className="text-orange-400">★</span>
                         </div>
                         {/* Location removed as requested */}
@@ -549,14 +555,14 @@ function MainPage() {
             <div className="bg-white rounded-2xl shadow-2xl p-6 w-full relative border border-gray-200" style={{ maxHeight: 400, overflowY: 'auto' }}>
               <button className="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-700" onClick={() => setShowBookingModal(false)}>&times;</button>
               <h2 className="text-xl font-bold mb-4 text-[#144D4A]">Your Selected Places</h2>
-              {selectedRecommendations.length === 0 ? (
+              {selectedActivities.length === 0 ? (
                 <p className="text-gray-500">No places selected yet.</p>
               ) : (
                 <ul className="space-y-2">
-                  {selectedRecommendations.map((rec, i) => (
+                  {selectedActivities.map((rec, i) => (
                     <li key={i} className="flex flex-col border-b pb-2">
                       <span className="font-semibold text-[#144D4A]">{rec.name}</span>
-                      <span className="text-sm text-gray-600">{rec.desc}</span>
+                      <span className="text-sm text-gray-600">{rec.description}</span>
                     </li>
                   ))}
                 </ul>
@@ -571,7 +577,7 @@ function MainPage() {
           </div>
         )}
         {/* Booking Button: fixed at top right at all times */}
-        {selectedRecommendations.length > 0 && (
+        {selectedActivities.length > 0 && (
         <div className="fixed right-6 top-24 z-50 flex flex-col items-end transition-all duration-300">
           <div className="relative">
             <button
@@ -630,6 +636,8 @@ function MainPage() {
 }
 
 export default function App() {
+  const [selectedActivities, setSelectedActivities] = useState([]);
+
   return (
     <>
       <style>{globalStyle}</style>
@@ -638,8 +646,8 @@ export default function App() {
       <style>{selectInputStyle}</style>
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/second" element={<SecondPage onBack={() => window.history.back()} />} />
+          <Route path="/" element={<MainPage selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />} />
+          <Route path="/second" element={<SecondPage selectedActivities={selectedActivities} onBack={() => window.history.back()} />} />
         </Routes>
       </Router>
     </>
