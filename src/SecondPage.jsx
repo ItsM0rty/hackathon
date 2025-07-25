@@ -183,7 +183,7 @@ export default function SecondPage({ onBack }) {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">Y</span>
                 </div>
-                <span className="text-xl font-display font-bold text-gray-900">Yaan</span>
+                <span className="text-xl font-display font-bold text-gray-900">Yatra</span>
               </div>
               <div className="hidden md:flex items-center space-x-8">
                 <a href="#" className="text-gray-600 hover:text-gray-900 font-medium">Destinations</a>

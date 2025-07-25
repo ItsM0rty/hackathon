@@ -297,6 +297,10 @@ function MainPage() {
 }
 .animate-fadeinout { animation: fadeinout 2s; }
 `}</style>
+      <style>{`
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .animate-blink { animation: blink 1s step-end infinite; }
+      `}</style>
       <div className="min-h-screen flex flex-col items-center py-0 px-2 relative" style={{ background: '#FFF8F0' }}>
         {/* Sticky/Overlay Header */}
         <header
@@ -333,10 +337,11 @@ function MainPage() {
           />
           {/* Overlay content at the bottom of the image */}
           <div className="absolute bottom-0 left-0 w-full flex flex-col items-center z-10 pb-12">
-            {/* Tagline */}
-            {/* Where are you coming from? Prompt */}
+            {/* Typing animation for prompt */}
             <div className="w-full max-w-4xl mb-2 flex justify-center">
-              <span className="block text-2xl font-bold text-white mb-2 text-center drop-shadow">Where are you coming from?</span>
+              <span className="block text-3xl md:text-4xl font-extrabold text-white mb-4 text-center drop-shadow">
+                Where are you coming from?
+              </span>
             </div>
             {/* Location Selector (Taskbar) */}
             <section
@@ -436,16 +441,24 @@ function MainPage() {
             <div key={locKey} className="mb-12">
               <h3 className="text-2xl font-bold text-[#F26B3A] mb-6">Recommended in {LOCATIONS.find(l => l.value === locKey).label}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {places[locKey].map((place, idx) => {
+                {[
+                  ...places[locKey],
+                  ...Array(Math.max(0, 12 - places[locKey].length)).fill({ name: null })
+                ].slice(0, 12).map((place, idx) => {
+                  if (!place.name) {
+                    return (
+                      <div key={"empty-" + locKey + "-" + idx} className="themed-card rounded-2xl shadow overflow-hidden flex flex-col items-center justify-center border-2 border-dashed border-gray-300 bg-gray-50 text-gray-400 h-96">
+                        <span className="text-3xl mb-2">⏳</span>
+                        <span className="font-semibold">Coming Soon</span>
+                      </div>
+                    );
+                  }
                   const selected = selectedRecommendations.find(r => r.name === place.name && r.description === place.description);
                   const slideIdx = cardSlides[place.name] || 0;
-                  // Use only the sorted activityImages (act 0, act 1, act 2, act 3) for the slideshow
                   let images = place.activityImages && place.activityImages.length === 4
                     ? place.activityImages
-                    : [place.mainImage, ...place.activityImages].filter(Boolean).slice(0, 4);
-                  // Track which side is hovered for this card
+                    : [place.mainImage, ...(place.activityImages || [])].filter(Boolean).slice(0, 4);
                   const [hoverSide, setHoverSide] = useState(null); // 'left', 'right', or null
-                  // Add price and rating (use defaults if not present)
                   const price = place.price || ('$' + (10 + (idx % 5) * 5));
                   const rating = place.rating || (4.5 + (idx % 5) * 0.1);
                   return (
