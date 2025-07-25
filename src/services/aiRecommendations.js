@@ -3,16 +3,15 @@
 
 class AIRecommendationService {
   constructor() {
-    // Use Vite environment variables for API keys in production
-    // DeepSeek is the primary API; ChatGPT is fallback only
     this.deepseekApiKey = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
     this.openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-    
-    // API endpoints
+    this.rapidApiKey = import.meta.env.VITE_RAPIDAPI_KEY || '';
     this.deepseekEndpoint = 'https://api.deepseek.com/v1/chat/completions';
     this.openaiEndpoint = 'https://api.openai.com/v1/chat/completions';
-    
-    console.log('🤖 AI Recommendation Service initialized (DeepSeek primary, ChatGPT fallback)');
+    console.log('AI Recommendation Service initialized (DeepSeek primary, ChatGPT fallback)');
+    if (this.rapidApiKey) {
+      console.log('RapidAPI key detected for price lookups');
+    }
   }
 
   // Generate structured prompt for activity recommendations
@@ -21,21 +20,18 @@ class AIRecommendationService {
       name: activity.name,
       description: activity.description,
       location: activity.location || 'Unknown',
-      city: activity.city || 'kathmandu'
+      city: activity.city || 'kathmandu',
+      price: this.rapidApiKey ? 'Price via RapidAPI' : (activity.price || 'N/A')
     }));
-
     return {
       system: `You are an expert travel consultant specializing in Nepal tourism. Your task is to analyze user preferences and recommend specific activities from a provided list.
-
 CRITICAL INSTRUCTIONS:
 1. Return ONLY valid JSON in the exact format specified below
 2. Select activities that match the user's preferences
 3. Provide detailed reasoning for each recommendation
 4. Recommend 3-8 activities total (mix of both cities if applicable)
 5. Consider user's personality, interests, and stated preferences
-
 Available activities: ${JSON.stringify(activitiesList, null, 2)}
-
 Return format (MUST be valid JSON):
 {
   "recommendations": [
@@ -48,11 +44,8 @@ Return format (MUST be valid JSON):
   ],
   "summary": "brief explanation of overall recommendation strategy"
 }`,
-      
       user: `User preferences: "${userPreferences}"
-
 Based on these preferences, recommend activities from the provided list that would best match this user's interests and travel style. Focus on their specific mentions like adventure level, social preferences, cultural interests, relaxation needs, etc.
-
 Remember to return ONLY the JSON response in the specified format.`
     };
   }
@@ -60,8 +53,7 @@ Remember to return ONLY the JSON response in the specified format.`
   // Call DeepSeek API
   async callDeepSeekAPI(prompt) {
     try {
-      console.log('🧠 Calling DeepSeek API...');
-      
+      console.log('Calling DeepSeek API...');
       const response = await fetch(this.deepseekEndpoint, {
         method: 'POST',
         headers: {
@@ -74,24 +66,20 @@ Remember to return ONLY the JSON response in the specified format.`
             { role: 'system', content: prompt.system },
             { role: 'user', content: prompt.user }
           ],
-          temperature: 0.3, // Lower temperature for more consistent JSON output
+          temperature: 0.3,
           max_tokens: 1500,
           response_format: { type: 'json_object' }
         })
       });
-
       if (!response.ok) {
         throw new Error(`DeepSeek API error: ${response.status} ${response.statusText}`);
       }
-
       const data = await response.json();
       const content = data.choices[0]?.message?.content;
-      
-      console.log('🧠 DeepSeek response received:', content);
+      console.log('DeepSeek response received:', content);
       return this.parseAIResponse(content);
-      
     } catch (error) {
-      console.error('❌ DeepSeek API error:', error);
+      console.error('DeepSeek API error:', error);
       throw error;
     }
   }
@@ -99,8 +87,7 @@ Remember to return ONLY the JSON response in the specified format.`
   // Call ChatGPT API
   async callChatGPTAPI(prompt) {
     try {
-      console.log('🤖 Calling ChatGPT API...');
-      
+      console.log('Calling ChatGPT API...');
       const response = await fetch(this.openaiEndpoint, {
         method: 'POST',
         headers: {
@@ -108,7 +95,7 @@ Remember to return ONLY the JSON response in the specified format.`
           'Authorization': `Bearer ${this.openaiApiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini', // Cost-effective model good for structured tasks
+          model: 'gpt-4o-mini',
           messages: [
             { role: 'system', content: prompt.system },
             { role: 'user', content: prompt.user }
@@ -118,19 +105,15 @@ Remember to return ONLY the JSON response in the specified format.`
           response_format: { type: 'json_object' }
         })
       });
-
       if (!response.ok) {
         throw new Error(`ChatGPT API error: ${response.status} ${response.statusText}`);
       }
-
       const data = await response.json();
       const content = data.choices[0]?.message?.content;
-      
-      console.log('🤖 ChatGPT response received:', content);
+      console.log('ChatGPT response received:', content);
       return this.parseAIResponse(content);
-      
     } catch (error) {
-      console.error('❌ ChatGPT API error:', error);
+      console.error('ChatGPT API error:', error);
       throw error;
     }
   }
@@ -159,7 +142,7 @@ Remember to return ONLY the JSON response in the specified format.`
       };
       
     } catch (error) {
-      console.error('❌ Failed to parse AI response:', error);
+      console.error('Failed to parse AI response:', error);
       throw new Error('Invalid JSON response from AI service');
     }
   }
@@ -169,43 +152,32 @@ Remember to return ONLY the JSON response in the specified format.`
     if (!userPreferences || !availableActivities || availableActivities.length === 0) {
       throw new Error('Invalid input: preferences and activities are required');
     }
-
-    console.log(`🎯 Getting AI recommendations for: "${userPreferences}"`);
-    console.log(`📋 Available activities: ${availableActivities.length}`);
-
+    console.log(`Getting AI recommendations for: "${userPreferences}"`);
+    console.log(`Available activities: ${availableActivities.length}`);
     const prompt = this.generateActivityPrompt(userPreferences, availableActivities);
-
     try {
-      // Try preferred API first
       if (preferredAPI === 'deepseek' && this.deepseekApiKey) {
         return await this.callDeepSeekAPI(prompt);
       } else if (preferredAPI === 'chatgpt' && this.openaiApiKey) {
         return await this.callChatGPTAPI(prompt);
       }
-      
-      // Fallback to available API
       if (this.deepseekApiKey) {
-        console.log('🔄 Falling back to DeepSeek API');
+        console.log('Falling back to DeepSeek API');
         return await this.callDeepSeekAPI(prompt);
       } else if (this.openaiApiKey) {
-        console.log('🔄 Falling back to ChatGPT API');
+        console.log('Falling back to ChatGPT API');
         return await this.callChatGPTAPI(prompt);
       }
-      
       throw new Error('No API keys configured');
-      
     } catch (error) {
-      console.error('❌ AI recommendation failed:', error);
-      
-      // Return fallback recommendations based on keywords
+      console.error('AI recommendation failed:', error);
       return this.getFallbackRecommendations(userPreferences, availableActivities);
     }
   }
 
   // Fallback recommendation system (keyword-based)
   getFallbackRecommendations(userPreferences, availableActivities) {
-    console.log('🔄 Using fallback keyword-based recommendations');
-    
+    console.log('Using fallback keyword-based recommendations');
     const preferences = userPreferences.toLowerCase();
     const keywords = {
       adventure: ['adventure', 'exciting', 'thrill', 'extreme', 'adrenaline', 'flying', 'paragliding', 'bungee'],
@@ -214,35 +186,26 @@ Remember to return ONLY the JSON response in the specified format.`
       nature: ['nature', 'outdoor', 'hiking', 'trekking', 'lake', 'mountain', 'scenic'],
       social: ['social', 'group', 'people', 'party', 'nightlife', 'shopping', 'market']
     };
-
     const recommendations = [];
-    
-    // Score activities based on keyword matches
     availableActivities.forEach(activity => {
       let score = 0;
       let matchedCategories = [];
-      
       const activityText = `${activity.name} ${activity.description}`.toLowerCase();
-      
       for (const [category, categoryKeywords] of Object.entries(keywords)) {
         const categoryMatches = categoryKeywords.filter(keyword => 
           preferences.includes(keyword) && activityText.includes(keyword)
         );
-        
         if (categoryMatches.length > 0) {
           score += categoryMatches.length * 20;
           matchedCategories.push(category);
         }
       }
-      
-      // Add base score for general preference words in activity
       const generalWords = preferences.split(' ').filter(word => word.length > 3);
       generalWords.forEach(word => {
         if (activityText.includes(word)) {
           score += 10;
         }
       });
-      
       if (score > 0) {
         recommendations.push({
           activityName: activity.name,
@@ -252,10 +215,7 @@ Remember to return ONLY the JSON response in the specified format.`
         });
       }
     });
-
-    // Sort by score and take top recommendations
     recommendations.sort((a, b) => b.matchScore - a.matchScore);
-    
     return {
       recommendations: recommendations.slice(0, 6),
       summary: 'Keyword-based recommendations (AI service unavailable)'
@@ -277,9 +237,9 @@ Remember to return ONLY the JSON response in the specified format.`
         };
         await this.callDeepSeekAPI(testPrompt);
         results.deepseek = true;
-        console.log('✅ DeepSeek API connected');
+        console.log('DeepSeek API connected');
       } catch (error) {
-        console.log('❌ DeepSeek API failed:', error.message);
+        console.log('DeepSeek API failed:', error.message);
       }
     }
 
@@ -291,9 +251,9 @@ Remember to return ONLY the JSON response in the specified format.`
         };
         await this.callChatGPTAPI(testPrompt);
         results.chatgpt = true;
-        console.log('✅ ChatGPT API connected');
+        console.log('ChatGPT API connected');
       } catch (error) {
-        console.log('❌ ChatGPT API failed:', error.message);
+        console.log('ChatGPT API failed:', error.message);
       }
     }
 
